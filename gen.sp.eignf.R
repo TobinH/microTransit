@@ -15,5 +15,5 @@ gen.sp.eignf<-function(x,cortical=FALSE) {
     posmax<-max(postree$dist)
     posdist[which(posdist>posmax)]<-posmax*4
     sp.eigenf<-pcoa(posdist)
-    print(paste("PCoA completed at",ys.time()))
+    print(paste("PCoA completed at",Sys.time()))
   }
