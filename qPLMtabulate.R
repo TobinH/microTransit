@@ -2,7 +2,7 @@
 # note that as of 4 Feb 15 microtransit is not a defined object class
 # seems like a natural progression, but one thing at a time
 
-p.qPLMtabulate<-function(x,low.pass=5/256){
+qPLMtabulate<-function(x,low.pass=5/256){
   results<-list(pixels=NULL,distance=NULL)
   nz.pix<-which(x[,,2]>(low.pass), arr.ind=TRUE)
   # low pass retardance filter to remove "empty" pixels from analysis
