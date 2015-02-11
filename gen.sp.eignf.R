@@ -1,4 +1,4 @@
-gen.sp.dist<-function(x,cortical=FALSE) {
+gen.sp.eigenf<-function(x,cortical=FALSE) {
   require(ape)
   require(vegan)
   if(cortical) {
