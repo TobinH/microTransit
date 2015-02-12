@@ -25,18 +25,29 @@ microtransit.LUT.output<-function(x,sample.name){
   gc()
   immat<-cbind(as.vector(as.integer(x[,,2]*90)),as.vector((as.integer(x[,,3]*180))))
   LUindex<-match(data.frame(t(immat)),data.frame(t(pixmat)))
+  rm(immat)
+  rm(pixmat)
   output<-array(data=RGBmat[LUindex,],dim=dim(x))
-  bkgrnd<-array(data=0.5,dim=dim(x))
-  bkgrnd[which(output>5/256)]<-output[which(output>5/256)]
+  rm(RGBmat)
+  rm(LUindex)
+  gc()
+  dindx<-which(output>5/256,arr.ind=TRUE)
+  dindx<-unique(dindx[,1:2])
+  output<-output[(min(dindx[,1])-10):(max(dindx[,1])+10),(min(dindx[,2])-10):(max(dindx[,2])+10),]
+  gc()
+  bkgrnd<-array(data=0.5,dim=dim(output))
+  for (i in 1:nrow(output)){
+    dindx<-which(output[i,,]>5/256,arr.ind=TRUE)
+    dindx<-unique(dindx[,1])
+    bkgrnd[i,dindx,]<-output[i,dindx,]
+  }
   output<-bkgrnd
   rm(bkgrnd)
-  rm(immat)
-  rm(LUindex)
   gc()
   output<-Image(output,colormode="Color")
   gc()
-  #display(outimg)
+  display(output)
   writeImage(output,file=paste(sample.name,"_overview.tif",sep=""), bits.per.sample=8L, type="tiff")
-  #print("calibrated images written to working directory")
+  print("calibrated images written to working directory")
   return(output)
 }
