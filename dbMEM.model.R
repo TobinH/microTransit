@@ -1,7 +1,7 @@
 # dbMEM analysis function
 # using spatial eigenfunctions from gen.sp.eigenfunction
 
-dbMEM.model<-function(qPLMtab,MEM){
+dbMEM.model<-function(qPLMtab,MEM,penalty){
   require(qtlmt)
   xnam <- paste("x_", 1:ncol(MEM),sep="")
   xyznam<-c("x","y","z")
@@ -18,6 +18,6 @@ dbMEM.model<-function(qPLMtab,MEM){
   fmlalo<-as.formula(cbind(x,y,z) ~ one)                    
   fitupper<-lm(fmlaup,data=eignf.data)
   fitlower<-lm(fmlalo,data=eignf.data)
-  results<-mStep(fitlower,direction="forward",scope=list(upper=fitupper,lower=fitlower),trace=TRUE)
+  results<-mStep(fitlower,direction="forward",scope=list(upper=fitupper,lower=fitlower),trace=TRUE,k=penalty)
   return(results)
 }
