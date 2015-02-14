@@ -2,9 +2,18 @@ gen.sp.eigenf<-function(x,cortical=FALSE) {
   require(ape)
   require(vegan)
   if(cortical) {
-    posdist<-dist(x,method="manhattan")
+    x<-scale(x,center=TRUE,scale=TRUE)
+    rad<-matrix(data=0,nrow=nrow(x),ncol=3)
+    rad[,1]<-sqrt(x[,1]^2+x[,2]^2)
+    rad[,2]<-x[,1]/rad[,1]
+    rad[,3]<-x[,2]/rad[,1]
+    rad[,1]<-scale(rad[,1],center=TRUE,scale=TRUE)
+    posdist<-dist(rad,method="euclidean")
+    postree<-spantree(posdist)
+    print(paste("Minimum spanning tree completed at",Sys.time()))
+    posmax<-max(postree$dist)
+    posdist[which(posdist>posmax)]<-posmax*4
     print(paste("Distance matrix completed at",Sys.time()))
-    posdist[which(posdist>1)]<-4
   } else {
     posdist<-dist(x,method="euclidean")
     print(paste("Distance matrix completed at",Sys.time()))
@@ -31,6 +40,7 @@ gen.sp.eigenf<-function(x,cortical=FALSE) {
   #cum.eig<-cumsum(rel.eig)
   results<-sweep(D.eig$vectors[,1:k],2,sqrt(eig[1:k]),FUN="*")
   return(results)
+  print(paste("Scaled eigenvectors written to object at",Sys.time()))
 }
 
 #centre <- function(D, n) {
