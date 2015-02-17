@@ -6,16 +6,16 @@ gen.mech.model<-function(qPLMtab){
   pos<-qPLMtab$pixels[,6:7]
   pos<-scale(pos,center=TRUE,scale=FALSE)
   posmod<-matrix(data=0,nrow=nrow(pos),ncol=3)
-  posmod[,1:2]<-pos
+  posmod[,1:2]<-pos[,1:2]
   posmod[,3]<-0
-  wgt.pts[,1]<-sin(4*qPLMtab$pixels[,1])*cos(2*qPLMtab$pixels[,2])*
+  wgt.pts[,1]<-sin(2*qPLMtab$pixels[,1])*cos(qPLMtab$pixels[,2])*
     (sqrt(pos[,1]^2+pos[,2]^2))
   # x in cartesian spherical projection of CFO weighted by distance from 
-  # centroid--theta out to 2pi from 1/2pi, phi to 2pi from pi
-  wgt.pts[,2]<-sin(4*qPLMtab$pixels[,1])*sin(2*qPLMtab$pixels[,2])*
+  # centroid--theta out to pi from 1/2pi
+  wgt.pts[,2]<-sin(2*qPLMtab$pixels[,1])*sin(qPLMtab$pixels[,2])*
     (sqrt(pos[,1]^2+pos[,2]^2))
   # y in ""
-  wgt.pts[,3]<-cos(4*qPLMtab$pixels[,1])*(sqrt(pos[,1]^2+pos[,2]^2))
+  wgt.pts[,3]<-cos(2*qPLMtab$pixels[,1])*(sqrt(pos[,1]^2+pos[,2]^2))
   # z in ""
   #Tw<-(t(wgt.pts)%*%wgt.pts)/length(wgt.pts[,1])
   results<-list(A=NULL,mod.points=NULL)
