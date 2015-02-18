@@ -1,5 +1,6 @@
-sp.eignf.plot<-function(qPLMtab,eignf.data,num){
+sp.eignf.plot<-function(qPLMtab,eignf.data,indx){
   require(ade4)
+  num<-length(indx)
   dmn<-ceiling(sqrt(num))
   par(mfrow=c(dmn,dmn))
   xy<-as.data.frame(qPLMtab$pixels[,6:7])
@@ -91,7 +92,7 @@ sp.eignf.plot<-function(qPLMtab,eignf.data,num){
       box()
     invisible(match.call())
   }
-  for(i in 1:num) {
+  for(i in indx) {
     s.value.tweak(xy,eignf.data[,(i+4)],method="greylevel",csize=0.05,grid=FALSE,addaxes=FALSE,include.origin=FALSE)
   }
   return()
