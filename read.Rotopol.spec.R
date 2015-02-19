@@ -14,7 +14,7 @@ read.Rotopol.spec<-function(thickness,wavelength,birefringence,mask=FALSE) {
   Rotopol.raw[[4]]<-as.numeric(thickness)
   Rotopol.raw[[5]]<-as.numeric(wavelength)
   Rotopol.raw[[6]]<-as.numeric(birefringence)
-  ifelse(mask, Rotopol.raw[[7]]<-read.bmp(maskfile), Rotopol.raw[[7]]<-array(1,dim=dim(Rotopol.raw[[1]])))
+  ifelse(mask, Rotopol.raw[[7]]<-read.bmp(maskfile)/256, Rotopol.raw[[7]]<-array(1,dim=dim(Rotopol.raw[[1]])))
   Rotopol.distilled<-array(data=NA, c(dim(Rotopol.raw[[1]])[2],dim(Rotopol.raw[[1]])[1],3))
   Rotopol.distilled[,,1]<-t(as.matrix(Rotopol.raw[[1]][,,2]/256))
   Rotopol.distilled[,,2]<-t(as.matrix(sqrt(asin(Rotopol.raw[[2]][,,2]/256)*(Rotopol.raw[[5]]/(2*pi*Rotopol.raw[[4]]*1000*Rotopol.raw[[6]])))))
