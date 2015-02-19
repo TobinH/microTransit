@@ -1,5 +1,10 @@
-# dbMEM analysis function
-# using spatial eigenfunctions from gen.sp.eigenfunction
+# dbMEM analysis function--modeling with forward selection
+# using spatial eigenfunctions from gen.sp.MEM
+# arguments--
+# qPLMtab: a tabulated qPLM dataset (output from qPLMtabulate.R)
+# MEM: a Moran Eigenvector Map (output from gen.sp.MEM.R)
+# regress: if FALSE, this function matches pixels to their MEM score without running a model
+# penalty: IC penalty for adding parameters. 2 is AIC, log(n) is BIC
 
 dbMEM.model<-function(qPLMtab,MEM,regress=TRUE,penalty=2){
   require(qtlmt)

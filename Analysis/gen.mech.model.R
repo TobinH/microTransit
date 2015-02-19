@@ -18,7 +18,7 @@ gen.mech.model<-function(qPLMtab){
   wgt.pts[,3]<-cos(2*qPLMtab$pixels[,1])*(sqrt(pos[,1]^2+pos[,2]^2))
   # z in ""
   #Tw<-(t(wgt.pts)%*%wgt.pts)/length(wgt.pts[,1])
-  results<-list(A=NULL,mod.points=NULL)
+  results<-list(A=NULL,mod.points=NULL,Eul.Ax=NULL,Eul.Ang=NULL)
   # results$eigTw<-eigen(Tw)
   Smod<-t(posmod)%*%wgt.pts/nrow(qPLMtab$pixels)
   dec.Smod<-svd(Smod)
@@ -27,8 +27,15 @@ gen.mech.model<-function(qPLMtab){
   points<-t(A%*%t(posmod))
   points<-points[,]/sqrt(points[,1]^2+points[,2]^2+points[,3]^2)
   results$mod.points<-points
+  I<-matrix(data=c(1,0,0,0,1,0,0,0,1),nrow=3,ncol=3)
+  Amod<-A-I
+  dec.Amod<-svd(Amod)
+  Eul.Ax<-t(dec.Amod$u[,3])
+  Eul.Ang<-2*acos(t(dec.Amod$u[,1]%*%dec.Amod$v[,2]))
+  results$Eul.Ax<-Eul.Ax
+  results$Eul.Ang<-Eul.Ang
   return(results)
   # troubleshooting results for now
   # form of results should be a per-pixel xyz estimate
 }
-  
+ 
