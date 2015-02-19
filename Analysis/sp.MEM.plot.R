@@ -1,4 +1,4 @@
-sp.eignf.plot<-function(qPLMtab,eignf.data,indx){
+sp.MEM.plot<-function(qPLMtab,eignf.data,indx){
   require(ade4)
   num<-length(indx)
   dmn<-ceiling(sqrt(num))
