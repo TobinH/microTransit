@@ -1,15 +1,17 @@
 # generate spatial eigenfunctions from qPLMtab data
 # arguments--
-# x: a qPLMtab$distance index (4x downsampled pixel position matrix)
+# qPLMtab: a tabulated qPLM data set (output from qPLMtabulate)
 # cortical: if TRUE, centers pixels and converts the cortex to a cylinder of standardized height and unit diameter
-# returns an (n x p) matrix of p spatial eigenfunction scores for n pixels (Moran's Eigenvector Map)
+# returns an (n x p+4) matrix of (x,y,z) pixel orientation, a column of 1s, 
+#   p spatial eigenfunction scores for n pixels (qPLM + Moran's Eigenvector Map)
 
-gen.sp.MEM<-function(x,cortical=FALSE) {
+gen.sp.MEM<-function(qPLMtab,cortical=FALSE) {
   require(ape)
   require(vegan)
-  pb<-winProgressBar(title=paste("gen.sp.MEM",format(Sys.time(), format="%H:%M")), min=0, max= 11, width=400)
+  pb<-winProgressBar(title=paste("gen.sp.MEM",format(Sys.time(), format="%H:%M")), min=0, max= 12, width=400)
   if(cortical) {
     setWinProgressBar(pb, 1, title=paste("gen.sp.MEM: centering cortex",format(Sys.time(), format="%H:%M")))
+    x<-qPLMtab$distance
     x<-scale(x,center=TRUE,scale=TRUE)
     rad<-matrix(data=0,nrow=nrow(x),ncol=3)
     rad[,1]<-sqrt(x[,1]^2+x[,2]^2)
@@ -52,12 +54,24 @@ gen.sp.MEM<-function(x,cortical=FALSE) {
   #rel.eig<-eig[1:k]/trace
   #cum.eig<-cumsum(rel.eig)
   setWinProgressBar(pb, 9, title=paste("gen.sp.MEM: scaling eigenfunctions",format(Sys.time(), format="%H:%M")))
-  results<-sweep(D.eig$vectors[,1:k],2,sqrt(eig[1:k]),FUN="*")
+  evecs<-sweep(D.eig$vectors[,1:k],2,sqrt(eig[1:k]),FUN="*")
   setWinProgressBar(pb, 10, title=paste("gen.sp.MEM: removing NaN eignefunctions",format(Sys.time(), format="%H:%M")))
-  if (any(is.nan(results))) {
-    results<-results[,1:(which(is.nan(results),arr.ind=TRUE)[,2][1])-1]
+  if (any(is.nan(evecs))) {
+    evecs<-evecs[,1:(which(is.nan(evecs),arr.ind=TRUE)[,2][1])-1]
   }
-  setWinProgressBar(pb, 11, title=paste("gen.sp.MEM: done!",format(Sys.time(), format="%H:%M")))
+  setWinProgressBar(pb, 11, title=paste("gen.sp.MEM: matching eigenfunctions to pixels",format(Sys.time(), format="%H:%M")))
+  xnam <- paste("x_", 1:ncol(evecs),sep="")
+  xyznam<-c("x","y","z")
+  xyz<-matrix(data=qPLMtab$pixels[,3:5],ncol=3)
+  colnames(xyz)<-xyznam
+  one<-matrix(data=1,nrow=nrow(xyz),ncol=1)
+  colnames(one)<-"one"
+  pixindex<-match(as.data.frame(t(qPLMtab$pixels[,8:9])),as.data.frame(t(qPLMtab$distance)))
+  MEMpix<-matrix(data=0,nrow=nrow(xyz),ncol=ncol(MEM))
+  MEMpix<-evecs[pixindex,]
+  colnames(MEMpix)<-xnam
+  results<-as.matrix(cbind(xyz,one,MEMpix))
+  setWinProgressBar(pb, 12, title=paste("gen.sp.MEM: done!",format(Sys.time(), format="%H:%M")))
   close(pb)
   print(paste("Finished gen.sp.MEM at",format(Sys.time(), format="%H:%M")))
   return(results)
