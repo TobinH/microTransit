@@ -8,7 +8,7 @@ mech.mod.plot<-function(qPLMtab,mech.mod){
   xy<-as.data.frame(qPLMtab$pixels[,6:7])
   s.value.tweak<-function (dfxy, z, xax = 1, yax = 2, method = c("squaresize", 
                                                                  "greylevel"), zmax = NULL, csize = 1, cpoint = 0, pch = 20, 
-                           clegend = 0.75, neig = NULL, cneig = 1, xlim = NULL, ylim = NULL, 
+                           clegend = 0.75, neig = NULL, cneig = 1, xlim = NULL, ylim = c(max(dfxy[,2]),min(dfxy[,2])), 
                            grid = TRUE, addaxes = TRUE, cgrid = 0.75, include.origin = TRUE, 
                            origin = c(0, 0), sub = "", csub = 1, possub = "topleft", 
                            pixmap = NULL, contour = NULL, area = NULL, add.plot = FALSE) 
