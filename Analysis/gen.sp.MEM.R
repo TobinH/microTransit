@@ -2,12 +2,14 @@
 # arguments--
 # qPLMtab: a tabulated qPLM data set (output from qPLMtabulate)
 # cortical: if TRUE, centers pixels and converts the cortex to a cylinder of standardized height and unit diameter
+# maps: passes to options:nev in ARPACK, number of eigenvalues to compute
 # returns an (n x p+4) matrix of (x,y,z) pixel orientation, a column of 1s, 
 #   p spatial eigenfunction scores for n pixels (qPLM + Moran's Eigenvector Map)
 
-gen.sp.MEM<-function(qPLMtab,cortical=FALSE) {
+gen.sp.MEM<-function(qPLMtab,cortical=FALSE,maps=300) {
   require(ape)
   require(vegan)
+  require(igraph)
   pb<-winProgressBar(title=paste("gen.sp.MEM",format(Sys.time(), format="%H:%M")), min=0, max= 12, width=400)
   if(cortical) {
     setWinProgressBar(pb, 1, title=paste("gen.sp.MEM: centering cortex",format(Sys.time(), format="%H:%M")))
@@ -45,8 +47,11 @@ gen.sp.MEM<-function(qPLMtab,cortical=FALSE) {
   delta1<-centre((-0.5*D^2),n)
   setWinProgressBar(pb, 6, title=paste("gen.sp.MEM: trace of delta1",format(Sys.time(), format="%H:%M")))
   trace<-sum(diag(delta1))
-  setWinProgressBar(pb, 7, title=paste("gen.sp.MEM: eigenanalyzing delta1",format(Sys.time(), format="%H:%M")))
-  D.eig<-eigen(delta1)
+  #setWinProgressBar(pb, 7, title=paste("gen.sp.MEM: eigenanalyzing delta1",format(Sys.time(), format="%H:%M")))
+  #D.eig<-eigen(delta1)
+  setWinProgressBar(pb, 7, title=paste("gen.sp.MEM: eigenanalyzing delta1 with ARPACK",format(Sys.time(), format="%H:%M")))
+  f2<-function(x, extra=NULL) { cat("."); as.vector(delta1 %*% x) }
+  D.eig<-arpack(f2, sym=TRUE, options=list(n=nrow(delta1),nev=maps,ncv=maps+2,which="LM",maxiter=maps*1000))
   #min.eig<-min(D.eig$values)
   eig<-(D.eig$values)
   setWinProgressBar(pb, 8, title=paste("gen.sp.MEM: retaining positive eigenfunctions",format(Sys.time(), format="%H:%M")))
@@ -67,7 +72,7 @@ gen.sp.MEM<-function(qPLMtab,cortical=FALSE) {
   one<-matrix(data=1,nrow=nrow(xyz),ncol=1)
   colnames(one)<-"one"
   pixindex<-match(as.data.frame(t(qPLMtab$pixels[,8:9])),as.data.frame(t(qPLMtab$distance)))
-  MEMpix<-matrix(data=0,nrow=nrow(xyz),ncol=ncol(MEM))
+  MEMpix<-matrix(data=0,nrow=nrow(xyz),ncol=ncol(evecs))
   MEMpix<-evecs[pixindex,]
   colnames(MEMpix)<-xnam
   results<-as.matrix(cbind(xyz,one,MEMpix))
