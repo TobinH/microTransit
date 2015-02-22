@@ -9,7 +9,7 @@ qPLMtabulate<-function(x,low.pass=5/256){
   results<-list(pixels=NULL,distance=NULL)
   nz.pix<-which(x[,,2]>(low.pass), arr.ind=TRUE)
   # low pass retardance filter to remove "empty" pixels from analysis
-  fourx.pos<-unique(nz.pix%/%4)
+  fourx.pos<-unique(nz.pix%/%4)*attr(x,"pix")/1000000
   # 4x4 binned pixel xy positions
   tabulated.data<-matrix(data=0,nrow=nrow(nz.pix),ncol=9)
   # setup by-pixel data matrix
@@ -23,14 +23,14 @@ qPLMtabulate<-function(x,low.pass=5/256){
   # pixel orientation y
   tabulated.data[,5]<-cos(tabulated.data[,1])
   # pixel orientation z
-  tabulated.data[,6]<-nz.pix[,1]
-  # pixel x position in image
-  tabulated.data[,7]<-nz.pix[,2]
-  # pixel y position in image
-  tabulated.data[,8]<-nz.pix[,1]%/%4
-  # pixel x position in 4x4 downsampled distances
-  tabulated.data[,9]<-nz.pix[,2]%/%4
-  # pixel y position in 4x4 downsampled distances
+  tabulated.data[,6]<-nz.pix[,1]*attr(x,"pix")/1000000
+  # pixel x position in image, calibrated to m
+  tabulated.data[,7]<-nz.pix[,2]*attr(x,"pix")/1000000
+  # pixel y position in image, calibrated to to m
+  tabulated.data[,8]<-nz.pix[,1]%/%4*attr(x,"pix")/1000000
+  # pixel x position in 4x4 downsampled distances, calibrated to m
+  tabulated.data[,9]<-nz.pix[,2]%/%4*attr(x,"pix")/1000000
+  # pixel y position in 4x4 downsampled distances, calibrated to m
   results$pixels<-tabulated.data
   results$distance<-fourx.pos
   return(results)

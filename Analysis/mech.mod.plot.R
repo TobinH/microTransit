@@ -98,5 +98,6 @@ mech.mod.plot<-function(qPLMtab,mech.mod){
     s.value.tweak(xy,sph[,i],method="greylevel",csize=0.05,grid=FALSE,addaxes=FALSE,include.origin=FALSE)
   }
   par(oldpar)
+  invisible()
   return()
 }
