@@ -5,12 +5,12 @@
 # x: qPLMobj
 # low.pass: remove noisy low theta pixels
 
-qPLMtabulate<-function(x,low.pass=5/256){
+qPLMtabulate<-function(x,low.pass=5/256,downsample=8){
   results<-list(pixels=NULL,distance=NULL)
   nz.pix<-which(x[,,2]>(low.pass), arr.ind=TRUE)
   # low pass retardance filter to remove "empty" pixels from analysis
-  fourx.pos<-unique(nz.pix%/%4)
-  # 4x4 binned pixel xy positions
+  downsample.pos<-unique(nz.pix%/%downsample)
+  # downsampled binned pixel xy positions
   tabulated.data<-matrix(data=0,nrow=nrow(nz.pix),ncol=9)
   # setup by-pixel data matrix
   tabulated.data[,1]<-as.vector(x[,,2][nz.pix]*pi/2)
@@ -27,11 +27,11 @@ qPLMtabulate<-function(x,low.pass=5/256){
   # pixel x position in image
   tabulated.data[,7]<-nz.pix[,2]
   # pixel y position in image
-  tabulated.data[,8]<-nz.pix[,1]%/%4
+  tabulated.data[,8]<-nz.pix[,1]%/%downsample
   # pixel x position in 4x4 downsampled distances
-  tabulated.data[,9]<-nz.pix[,2]%/%4
+  tabulated.data[,9]<-nz.pix[,2]%/%downsample
   # pixel y position in 4x4 downsampled distances
   results$pixels<-tabulated.data
-  results$distance<-fourx.pos
+  results$distance<-downsample.pos
   return(results)
 }
