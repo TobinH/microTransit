@@ -1,7 +1,7 @@
 # summary of xyz orientation data
 
 scatter.matrix.summary<-function(qPLMtab){
-  xyz<-as.matrix(qPLMtab$pixels[,6:7])
+  xyz<-as.matrix(qPLMtab$pixels[,3:5])
   results<-list(Tbar=NULL,R=NULL,eign=NULL,var=NULL)
   Tbar<-(t(xyz)%*%xyz)/length(xyz[,1])
   R<-sqrt(sum(colSums(xyz)^2))

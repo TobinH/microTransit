@@ -112,10 +112,10 @@ Rotopol.qPLM<-function(sample.name,thickness, wavelength, birefringence, pixel=7
     writeImage(output,file=paste(sample.name,"_overview.tif",sep=""), bits.per.sample=8L, type="tiff")
     setWinProgressBar(pb, 18, title="Rotopol.qPLM: showing overview")
     display(output)
-    setWinProgressBar(pb, 19, title="Rotopol.qPLM: done!")
     print("calibrated images written to working directory")
-    close(pb)
   }
+  setWinProgressBar(pb, 19, title="Rotopol.qPLM: done!")
+  close(pb)
   invisible(Rotopol.distilled)
   return(Rotopol.distilled)
 }

@@ -4,10 +4,10 @@
 # AIC to select 'best' model
 
 link.mech.model<-function(qPLMtab) {
-  theta<-qPLMtab[,1]
-  phi<-qPLMtab[,2]
-  v<-qPLMtab[,6]
-  w<-qPLMtab[,7]
+  theta<-qPLMtab$pixels[,1]
+  phi<-qPLMtab$pixels[,2]
+  v<-qPLMtab$pixels[,6]
+  w<-qPLMtab$pixels[,7]
   tresist<-abs(cos(phi-atan2(w,v)))*cos(theta)
   bresist<-sin(2*theta)
   mechdata<-as.data.frame(cbind(tresist,bresist,v,w))
