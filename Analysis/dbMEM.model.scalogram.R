@@ -4,13 +4,12 @@
 
 dbMEM.model.scalogram<-function(MEM){
   eignf.data<-as.data.frame(MEM)
-  fmla<-as.formula(paste("cbind(x,y,z) ~ one + ", paste(colnames(MEM)[4:ncol(MEM)], collapse= "+")))
+  fmla<-as.formula(paste("cbind(x,y,z) ~ 1 + ", paste(colnames(MEM)[5:ncol(MEM)], collapse= "+")))
   fit<-lm(fmla,data=eignf.data)
   anva<-anova(fit)
   results<-list(fit=NULL,anova=NULL)
   results$fit<-fit
   results$anova<-anva
-  #plot(anva[2:nrow(anva),3],type="l", par(mar=c(0,0,0,0)))
-  #par(mar=c(5,4,4,2)+0.1)
+  plot(results$anova[2:nrow(results$anova),3],type="l")
   return(results)
 }

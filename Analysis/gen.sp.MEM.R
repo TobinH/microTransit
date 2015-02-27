@@ -28,6 +28,7 @@ gen.sp.MEM<-function(qPLMtab,cortical=FALSE,maps=300) {
     posdist[which(posdist>posmax)]<-posmax*4
     } else {
     setWinProgressBar(pb, 2, title=paste("gen.sp.MEM: computing distances",format(Sys.time(), format="%H:%M")))
+    x<-qPLMtab$distance
     posdist<-dist(x,method="euclidean")
     setWinProgressBar(pb, 3, title=paste("gen.sp.MEM: minimum spanning tree",format(Sys.time(), format="%H:%M")))
     postree<-spantree(posdist)
