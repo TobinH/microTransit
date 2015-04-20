@@ -1,23 +1,30 @@
-# read Rotopol (Werner Kaminsky) bitmaps into a qPLM object in R with specified parameters
+# read Rotopol (Werner Kaminsky) bitmaps into a qPLM object in R 
+# with specified parameters.
 # arguments--
 # thickness: slide thickness in microns
 # wavelength: center of analysis wavelength in nm
 # birefringence: estimated birefringence constant of ROI
 # pixel: pixel size in microns--default is for E145 Leica A6 scope at 1.25x
-# up: if the image is skewed, up is whatever direction you want to assign to the top, as a compass heading in degrees
+# up: if the image is skewed, up is whatever direction you want to assign 
+#   to the top, as a compass heading in degrees
 #   (1-359--extremes are 90 for the right side, 180 for bottom, 270 for left)
-# mask: Loads a black-and-white bitmap that defines a region of interest. Black pixels (0) will be dropped, 
-#   white pixels (255) will be kept. If mask=TRUE, a window will open to allow you to choose the mask file.
-# pics.out: if TRUE, returns single-channel greyscale .tiffs and a PolarLUV composite .tiff
-# mono.bkgrnd: Gray level for single channel backgrounds (0-100). Default is white (0).
-# comp.bkgrnd: Gray level for composite background (0-100). Default is 50% gray (50)
+# mask: Loads a black-and-white bitmap that defines a region of interest. 
+#   Black pixels (0) will be dropped, 
+#   to allow you to choose the mask file.
+# pics.out: if TRUE, returns single-channel greyscale .tiffs 
+#   and a PolarLUV composite .tiff
+# mono.bkgrnd: Gray level for single channel backgrounds (0-100). 
+#   Default is white (0).
+# comp.bkgrnd: Gray level for composite background (0-100). Default 
+#   is 50% gray (50)
 
 Rotopol.qPLM<-function(sample.name,thickness, wavelength, birefringence, pixel=7.5832259, up=0, mask=FALSE, pics.out=TRUE, comp.bkgrnd=50) {
   require(bmp)
   require(colorspace)
   require(EBImage)
   Rotopol.raw<-vector("list", 7)
-  bmpfiles<-choose.files(default="",caption="Select a0, a1, and a2 bitmaps",multi=TRUE)
+  bmpfiles<-choose.files(default="",caption="Select a0, a1, and a2 bitmaps",
+                         multi=TRUE)
   if (mask) {
     maskfile<-choose.files(default="",caption="Select mask bitmap")
   }
