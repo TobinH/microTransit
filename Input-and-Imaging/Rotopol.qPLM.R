@@ -50,9 +50,9 @@ Rotopol.qPLM<-function(sample.name,thickness, wavelength, birefringence, pixel=7
   Rotopol.distilled[,,1]<-t(as.matrix(Rotopol.raw[[1]][,,2]/255))
   # transmittance pixels scaled to 0-1 range
   setWinProgressBar(pb, 6, title="Rotopol.qPLM: writing array: Theta")
-  Rotopol.distilled[,,2]<-t(as.matrix(sqrt(asin(Rotopol.raw[[2]][,,2]/255)*(Rotopol.raw[[5]]/(2*pi*Rotopol.raw[[4]]*1000*Rotopol.raw[[6]])))))
-  # retardance pixels transformed to elevation angle (theta)-theta mapped linearly to 0-1 range
-  setWinProgressBar(pb, 7, title="Rotopol.writing array: Phi")
+  Rotopol.distilled[,,2]<-t(as.matrix(asin(sqrt(asin(Rotopol.raw[[2]][,,2]/255)*(Rotopol.raw[[5]]/(2*pi*Rotopol.raw[[4]]*1000*Rotopol.raw[[6]]))))*pi/2))
+  # retardance pixels transformed to elevation angle (theta) mapped linearly to 0-1 range
+  setWinProgressBar(pb, 7, title="Rotopol.qPLM: writing array: Phi")
   Rotopol.distilled[,,3]<-t(as.matrix(Rotopol.raw[[3]][,,2]/255))
   # azimuth pixels (0 degrees to 179 degrees) scaled to 0-1 range
   setWinProgressBar(pb, 8, title="Rotopol.qPLM: applying mask")
@@ -97,13 +97,13 @@ Rotopol.qPLM<-function(sample.name,thickness, wavelength, birefringence, pixel=7
     masked<-masked[wmin:wmax,vmin:vmax,]
     setWinProgressBar(pb, 14, title="Rotopol.qPLM: writing image: _trans")
     trans<-Image(Rotopol.distilled[wmin:wmax,vmin:vmax,1],colormode="Grayscale")
-    writeImage(trans, file=paste(sample.name,"_trans.tif",sep=""), type="tiff")
+    writeImage(trans, file=paste(sample.name,"_trans.tif",sep=""), bits.per.sample=8L, type="tiff")
     setWinProgressBar(pb, 15, title="Rotopol.qPLM: writing image: _theta")
     theta<-Image(Rotopol.distilled[wmin:wmax,vmin:vmax,2],colormode="Grayscale")
-    writeImage(theta, file=paste(sample.name,"_theta.tif",sep=""), type="tiff")
+    writeImage(theta, file=paste(sample.name,"_theta.tif",sep=""), bits.per.sample=8L, type="tiff")
     setWinProgressBar(pb, 16, title="Rotopol.qPLM: writing image: _phi")
     phi<-Image(Rotopol.distilled[wmin:wmax,vmin:vmax,3],colormode="Grayscale")
-    writeImage(phi, file=paste(sample.name,"_phi.tif",sep=""), type="tiff")
+    writeImage(phi, file=paste(sample.name,"_phi.tif",sep=""), bits.per.sample=8L, type="tiff")
     rm(trans,theta,phi)
     gc()
     setWinProgressBar(pb, 17, title="Rotopol.qPLM: writing image: _overview")
@@ -124,6 +124,7 @@ Rotopol.qPLM<-function(sample.name,thickness, wavelength, birefringence, pixel=7
   setWinProgressBar(pb, 19, title="Rotopol.qPLM: done!")
   close(pb)
   invisible(Rotopol.distilled)
+  gc()
   return(Rotopol.distilled)
 }
 
