@@ -7,9 +7,9 @@ Rotopol<-function(){
   if (is.na(wavelength)) {
     wavelength<-532
   }
-  birefringence<-as.numeric(readline("Birefringence of tissue (hit ENTER for extant bone default of 0.005):"))
+  birefringence<-as.numeric(readline("Birefringence of tissue (hit ENTER for Lab Turkey Tendon default of 0.0025):"))
   if (is.na(birefringence)) {
-    birefringence<-0.005
+    birefringence<-0.0025
   }
   Rotopol.qPLM(sample.name=sample.name,thickness=thickness,wavelength=wavelength,birefringence=birefringence,mask=TRUE, comp.bkgrnd=100)
 }

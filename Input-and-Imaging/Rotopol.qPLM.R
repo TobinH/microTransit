@@ -50,7 +50,7 @@ Rotopol.qPLM<-function(sample.name,thickness, wavelength, birefringence, pixel=7
   Rotopol.distilled[,,1]<-t(as.matrix(Rotopol.raw[[1]][,,2]/255))
   # transmittance pixels scaled to 0-1 range
   setWinProgressBar(pb, 6, title="Rotopol.qPLM: writing array: Theta")
-  Rotopol.distilled[,,2]<-t(as.matrix(asin(sqrt(asin(Rotopol.raw[[2]][,,2]/255)*(Rotopol.raw[[5]]/(2*pi*Rotopol.raw[[4]]*1000*Rotopol.raw[[6]]))))*pi/2))
+  Rotopol.distilled[,,2]<-t(as.matrix(asin(sqrt((asin(Rotopol.raw[[2]][,,2]/255))*Rotopol.raw[[5]]/(2*pi*Rotopol.raw[[4]]*1000*Rotopol.raw[[6]])))))
   # retardance pixels transformed to elevation angle (theta) mapped linearly to 0-1 range
   setWinProgressBar(pb, 7, title="Rotopol.qPLM: writing array: Phi")
   Rotopol.distilled[,,3]<-t(as.matrix(Rotopol.raw[[3]][,,2]/255))
