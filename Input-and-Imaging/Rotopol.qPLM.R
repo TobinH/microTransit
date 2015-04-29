@@ -124,8 +124,8 @@ Rotopol.qPLM<-function(sample.name,thickness, wavelength, birefringence, pixel=7
   setWinProgressBar(pb, 19, title="Rotopol.qPLM: done!")
   close(pb)
   invisible(Rotopol.distilled)
-  gc()
   return(Rotopol.distilled)
+  gc()
 }
 
 # test<-read.Rotopol.spec(15,546,0.005)
