@@ -32,7 +32,7 @@ qPLM.keymaker<-function(pixel.size) {
   rm(thetaseq, phiseq)
   # integer combinations of theta and phi for the look-up table
   
-  PLUV.LUT<-polarLUV(pixLUT[,1]*73.2/90, pixLUT[,1]*57.65/90, pixLUT[,2]*360/180)
+  PLUV.LUT<-polarLUV((pixLUT[,1]*0.75+22.5), pixLUT[,1]*57.65/90, pixLUT[,2]*360/180)
   # polar LUV colorspace encoding of each integer combination
   
   RGB.LUT<-as(PLUV.LUT,"RGB")

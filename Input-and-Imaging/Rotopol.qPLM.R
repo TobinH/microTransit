@@ -136,7 +136,7 @@ Rotopol.qPLM<-function(sample.name,
     # integer combinations of theta and phi for the look-up table
     
     setWinProgressBar(pb, 10, title="Rotopol.qPLM: LUV encoding")
-    PLUV.LUT<-polarLUV(pixLUT[,1]*73.2/theta.max, pixLUT[,1]*57.65/theta.max, pixLUT[,2]*360/180)
+    PLUV.LUT<-polarLUV((pixLUT[,1]*0.75+22.5)*theta.max/90, pixLUT[,1]*57.65/theta.max, pixLUT[,2]*360/180)
     # polar LUV colorspace encoding of each integer combination
     
     setWinProgressBar(pb, 11, title="Rotopol.qPLM: RGB translation")

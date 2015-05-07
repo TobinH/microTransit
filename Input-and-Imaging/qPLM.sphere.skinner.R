@@ -29,7 +29,7 @@ qPLM.sphere.skinner<-function(pixel.size, theta.max) {
   rm(thetaseq, phiseq)
   # integer combinations of theta and phi for the look-up table
   
-  PLUV.LUT<-polarLUV(pixLUT[,1]*73.2/theta.max, pixLUT[,1]*57.65/theta.max, pixLUT[,2]*360/180)
+  PLUV.LUT<-polarLUV((pixLUT[,1]*0.75+22.5)*theta.max/90, pixLUT[,1]*57.65/theta.max, pixLUT[,2]*360/180)
   # polar LUV colorspace encoding of each integer combination
   
   RGB.LUT<-as(PLUV.LUT,"RGB")

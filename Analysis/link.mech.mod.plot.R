@@ -1,8 +1,17 @@
-link.mech.mod.plot<-function(qPLMtab,link.mech.mod){
+# takes !fitted values! for the link.mech.mod argument--that was poorly annotated.
+# so: link.mech.mod$modelfit[[model#]]$fitted.values
+# will also plot residuals.
+
+link.mech.mod.plot<-function(qPLMtab,link.mech.mod,model.number,fitted=TRUE){
   require(ade4)
   oldpar<-par(no.readonly=TRUE)
   par(mfrow=c(1,3))
-  brtr<-as.data.frame(link.mech.mod)
+  if (fitted) {
+    brtr<-as.data.frame(link.mech.mod$modelfit[[model.number]]$fitted.values)
+  }
+  else {
+    brtr<-as.data.frame(link.mech.mod$modelfit[[model.number]]$residuals)
+  }
   xy<-as.data.frame(qPLMtab$pixels[,6:7])
   s.value.tweak<-function (dfxy, z, xax = 1, yax = 2, method = c("squaresize", 
                                                                  "greylevel"), zmax = NULL, csize = 1, cpoint = 0, pch = 20, 
