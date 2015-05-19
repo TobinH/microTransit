@@ -102,14 +102,35 @@ Rotopol.qPLM<-function(sample.name,
   Rotopol.distilled[,,3]<-t(Rotopol.raw[[7]][,,2])*Rotopol.distilled[,,3]
   # mask cutouts--only white mask pixels remain
   
+  setWinProgressBar(pb, 9, title="Rotopol.qPLM: trimming to mask")
+  dindx<-which(t(Rotopol.raw[[7]][,,2])>1/255, arr.ind=TRUE)
+  # index of masked pixels
+  
+  ifelse(as.logical(min(dindx[,1])<10),
+         vmin<-0,
+         vmin<-min(dindx[,1])-10)
+  ifelse(as.logical(max(dindx[,1])>dim(Rotopol.distilled)[1]-10),
+         vmax<-dim(Rotopol.distilled)[1],
+         vmax<-max(dindx[,1])+10)
+  ifelse(as.logical(min(dindx[,2])<10),
+         umin<-0,
+         umin<-min(dindx[,2])-10)
+  ifelse(as.logical(max(dindx[,2])>dim(Rotopol.distilled)[2]-10),
+         umax<-dim(Rotopol.distilled)[2],
+         umax<-max(dindx[,2])+10)
+  
+  Rotopol.distilled<-Rotopol.distilled[vmin:vmax, umin:umax,]
+  # trim image array to non-zero pixels with a 10-pixel blank border
+  
+  
   rm(Rotopol.raw)
   gc()
   # manipulating these arrays can tax some 32-bit systems... better safe and slow than
   # lost in the woods with a programmer that doesn't have good error handling skills (me)
   
   attributes(Rotopol.distilled)<-list(dim=dim(Rotopol.distilled),
-                                      dimnames=list(paste("v",seq(length.out=length(Rotopol.distilled[,1,1])), sep=""), 
-                                                    paste("w", seq(length.out=length(Rotopol.distilled[1,,1])), sep=""),
+                                      dimnames=list(paste("u",seq(length.out=length(Rotopol.distilled[,1,1])), sep=""), 
+                                                    paste("v", seq(length.out=length(Rotopol.distilled[1,,1])), sep=""),
                                                     c("Trans","Theta","Phi")),
                                       thickness_um=thickness,
                                       wavelength_nm=wavelength,
@@ -119,7 +140,7 @@ Rotopol.qPLM<-function(sample.name,
   # sets attributes for qPLM object
   
   if (pics.out) {
-    setWinProgressBar(pb, 9, title="Rotopol.qPLM: building colorspace")
+    setWinProgressBar(pb, 10, title="Rotopol.qPLM: building colorspace")
     if(theta.scale){
       theta.max<-ceiling(max(Rotopol.distilled[,,2]*90))
     }
@@ -135,11 +156,11 @@ Rotopol.qPLM<-function(sample.name,
     rm(thetaseq, phiseq)
     # integer combinations of theta and phi for the look-up table
     
-    setWinProgressBar(pb, 10, title="Rotopol.qPLM: LUV encoding")
+    setWinProgressBar(pb, 11, title="Rotopol.qPLM: LUV encoding")
     PLUV.LUT<-polarLUV((pixLUT[,1]*0.75+22.5)*theta.max/90, pixLUT[,1]*57.65/theta.max, pixLUT[,2]*360/180)
     # polar LUV colorspace encoding of each integer combination
     
-    setWinProgressBar(pb, 11, title="Rotopol.qPLM: RGB translation")
+    setWinProgressBar(pb, 12, title="Rotopol.qPLM: RGB translation")
     RGB.LUT<-as(PLUV.LUT,"RGB")
     rm(PLUV.LUT)
     # RGB value conversion of polar LUV look-up table
@@ -153,7 +174,7 @@ Rotopol.qPLM<-function(sample.name,
     gc()
     # n by 3 RGB look-up table
     
-    setWinProgressBar(pb, 12, title="Rotopol.qPLM: matching orientation to color")
+    setWinProgressBar(pb, 13, title="Rotopol.qPLM: matching orientation to color")
     if (invert.theta.scale){
       theta.values<-as.vector(as.integer((1-Rotopol.distilled[,,2])*90))
     }
@@ -168,63 +189,31 @@ Rotopol.qPLM<-function(sample.name,
     rm(immat, pixmat)
     # look-up indices for image pixels
     
-    masked<-array(data=RGBmat[LUindex,], dim=dim(Rotopol.distilled))
+    coded<-array(data=RGBmat[LUindex,], dim=dim(Rotopol.distilled))
     rm(RGBmat)
     rm(LUindex)
     gc()
     # cast looked-up RGB values into RGB image array
-    
-    setWinProgressBar(pb, 13, title="Rotopol.qPLM: trimming images")
-    dindx<-which(masked>1/256, arr.ind=TRUE)
-    dindx<-unique(dindx[,1:2])
-    # index of non-zero pixel values for theta and phi
-    
-    ifelse(as.logical(min(dindx[,1])<10),
-           wmin<-0,
-           wmin<-min(dindx[,1]))
-    ifelse(as.logical(max(dindx[,1])>dim(Rotopol.distilled)[1]-10),
-           wmax<-dim(Rotopol.distilled)[1],
-           wmax<-max(dindx[,1]))
-    ifelse(as.logical(min(dindx[,2])<10),
-           vmin<-0,
-           vmin<-min(dindx[,2]))
-    ifelse(as.logical(max(dindx[,2])>dim(Rotopol.distilled)[2]-10),
-           vmax<-dim(Rotopol.distilled)[2],
-           vmax<-max(dindx[,2]))
-    masked<-masked[wmin:wmax, vmin:vmax,]
-    # trim image array to non-zero pixels with a 10-pixel blank border
-    
+        
     setWinProgressBar(pb, 14, title="Rotopol.qPLM: writing image: _trans")
-    trans<-Image(Rotopol.distilled[wmin:wmax,vmin:vmax,1], colormode="Grayscale")
+    trans<-Image(Rotopol.distilled[,,1], colormode="Grayscale")
     writeImage(trans, file=paste(sample.name,"_trans.tif", sep=""), bits.per.sample=8L, type="tiff")
     # Transmission (I) grayscale image out
     
     setWinProgressBar(pb, 15, title="Rotopol.qPLM: writing image: _theta")
-    theta<-Image(Rotopol.distilled[wmin:wmax, vmin:vmax,2], colormode="Grayscale")
+    theta<-Image(Rotopol.distilled[,,2], colormode="Grayscale")
     writeImage(theta, file=paste(sample.name, "_theta.tif", sep=""), bits.per.sample=8L, type="tiff")
     # colatitude (theta) grayscale image out
     
     setWinProgressBar(pb, 16, title="Rotopol.qPLM: writing image: _phi")
-    phi<-Image(Rotopol.distilled[wmin:wmax,vmin:vmax,3], colormode="Grayscale")
+    phi<-Image(Rotopol.distilled[,,3], colormode="Grayscale")
     writeImage(phi, file=paste(sample.name, "_phi.tif",sep=""), bits.per.sample=8L, type="tiff")
     rm(trans, theta, phi)
     gc()
     # azimuth (phi) grayscale image out
     
     setWinProgressBar(pb, 17, title="Rotopol.qPLM: writing image: _overview")
-    out<-array(data=(100-comp.bkgrnd)/100, dim=dim(masked))
-    # create a blank grey background (adjustable in args)
-    
-    for (i in 1:nrow(masked)){
-      dindx<-which(masked[i,,]>1/256, arr.ind=TRUE)
-      dindx<-unique(dindx[,1])
-      out[i,dindx,]<-masked[i,dindx,]
-    }  
-    rm(masked)
-    gc()
-    # overlaying RGB theta and phi combined image on null pixel background
-    
-    output<-Image(out,colormode="Color")
+    output<-Image(coded,colormode="Color")
     writeImage(output,file=paste(sample.name,"_overview.tif", sep=""), bits.per.sample=8L, type="tiff")
     # combined colatitude and azimuth color image out
     
@@ -235,12 +224,12 @@ Rotopol.qPLM<-function(sample.name,
     print("calibrated images written to working directory")
   }
   setWinProgressBar(pb, 19, title="Rotopol.qPLM: done!")
+  close(pb)
   
   invisible(Rotopol.distilled)
   return(Rotopol.distilled)
   # sends calibrated qPLM data to specified object
   
-  close(pb)
   gc()
   # may be overkill, but see above
 }
