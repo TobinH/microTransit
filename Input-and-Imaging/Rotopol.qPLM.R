@@ -25,7 +25,10 @@
 #   to parallel with the slide. Useful for sections with predominantly out-of-plane fibers (default is FALSE)
 
 Rotopol.qPLM<-function(sample.name, 
-                       thickness, 
+                       north.thickness, 
+                       south.thickness,
+                       west.thickness,
+                       east.thickness,
                        wavelength, 
                        birefringence, 
                        pixel=7.5832259, 
@@ -71,58 +74,87 @@ Rotopol.qPLM<-function(sample.name,
   Rotopol.raw[[3]]<-read.bmp(bmpfiles[3])
   # read a2 bitmap (azimuth, phi)
   
-  setWinProgressBar(pb, 4, title="Rotopol.qPLM: parameters & mask")
-  Rotopol.raw[[4]]<-as.numeric(thickness)
-  Rotopol.raw[[5]]<-as.numeric(wavelength)
-  Rotopol.raw[[6]]<-as.numeric(birefringence)
-  # parameters from arguments
-  
+  setWinProgressBar(pb, 4, title="Rotopol.qPLM: trimming to mask")
+      
   ifelse(mask, Rotopol.raw[[7]]<-read.bmp(maskfile)/255, Rotopol.raw[[7]]<-array(1,dim=dim(Rotopol.raw[[1]])))
   # read mask or create blank mask object
-  
-  Rotopol.distilled<-array(data=NA, c(dim(Rotopol.raw[[1]])[2],dim(Rotopol.raw[[1]])[1],3))
-  # create ouput object array
-  
-  setWinProgressBar(pb, 5, title="Rotopol.qPLM: writing array: I")
-  Rotopol.distilled[,,1]<-t(as.matrix(Rotopol.raw[[1]][,,2]/255))
-  # transmittance pixels scaled to 0-1 range
-  
-  setWinProgressBar(pb, 6, title="Rotopol.qPLM: writing array: Theta")
-  Rotopol.distilled[,,2]<-t(as.matrix(asin(sqrt((asin(Rotopol.raw[[2]][,,2]/255))
-                                                *Rotopol.raw[[5]]/(2*pi*Rotopol.raw[[4]]*1000*Rotopol.raw[[6]])))))
-  # retardance pixels transformed to elevation angle (theta) mapped linearly to 0-1 range
-  
-  setWinProgressBar(pb, 7, title="Rotopol.qPLM: writing array: Phi")
-  Rotopol.distilled[,,3]<-t(as.matrix(Rotopol.raw[[3]][,,2]/255))
-  # azimuth pixels (0 degrees to 179 degrees) scaled to 0-1 range
-  
-  setWinProgressBar(pb, 8, title="Rotopol.qPLM: applying mask")
-  Rotopol.distilled[,,1]<-t(Rotopol.raw[[7]][,,2])*Rotopol.distilled[,,1]
-  Rotopol.distilled[,,2]<-t(Rotopol.raw[[7]][,,2])*Rotopol.distilled[,,2]
-  Rotopol.distilled[,,3]<-t(Rotopol.raw[[7]][,,2])*Rotopol.distilled[,,3]
-  # mask cutouts--only white mask pixels remain
-  
-  setWinProgressBar(pb, 9, title="Rotopol.qPLM: trimming to mask")
+    
   dindx<-which(t(Rotopol.raw[[7]][,,2])>1/255, arr.ind=TRUE)
   # index of masked pixels
   
   ifelse(as.logical(min(dindx[,1])<10),
-         vmin<-0,
+         vmin<-1,
          vmin<-min(dindx[,1])-10)
-  ifelse(as.logical(max(dindx[,1])>dim(Rotopol.distilled)[1]-10),
-         vmax<-dim(Rotopol.distilled)[1],
+  ifelse(as.logical(max(dindx[,1])>dim(Rotopol.raw[[7]])[1]-10),
+         vmax<-dim(Rotopol.raw[[7]])[1],
          vmax<-max(dindx[,1])+10)
   ifelse(as.logical(min(dindx[,2])<10),
-         umin<-0,
+         umin<-1,
          umin<-min(dindx[,2])-10)
-  ifelse(as.logical(max(dindx[,2])>dim(Rotopol.distilled)[2]-10),
-         umax<-dim(Rotopol.distilled)[2],
+  ifelse(as.logical(max(dindx[,2])>dim(Rotopol.raw[[7]])[2]-10),
+         umax<-dim(Rotopol.raw[[7]])[2],
          umax<-max(dindx[,2])+10)
   
-  Rotopol.distilled<-Rotopol.distilled[vmin:vmax, umin:umax,]
-  # trim image array to non-zero pixels with a 10-pixel blank border
+  Rotopol.raw[[1]]<-Rotopol.raw[[1]][vmin:vmax, umin:umax,]
+  Rotopol.raw[[2]]<-Rotopol.raw[[2]][vmin:vmax, umin:umax,]
+  Rotopol.raw[[3]]<-Rotopol.raw[[3]][vmin:vmax, umin:umax,]
+  Rotopol.raw[[7]]<-Rotopol.raw[[7]][vmin:vmax, umin:umax,]
+  # trim image arrays to non-zero pixels with a 10-pixel blank border
+    
+  Rotopol.distilled<-array(data=NA, c(dim(Rotopol.raw[[1]])[2],dim(Rotopol.raw[[1]])[1],3))
+  # create ouput object array
   
+  setWinProgressBar(pb, 5, title="Rotopol.qPLM: parameters")
   
+  Rotopol.raw[[4]]<-as.numeric(c(north.thickness, south.thickness, west.thickness, east.thickness))
+  Rotopol.raw[[5]]<-as.numeric(wavelength)
+  Rotopol.raw[[6]]<-as.numeric(birefringence)
+  # parameters from arguments
+  
+  mid.u.pos<-ceiling((umax-umin)/2)
+  mid.v.pos<-ceiling((vmax-vmin)/2)
+  # center N, S, W, E positions for trimmed arrays
+  
+  wedge<-matrix(c(mid.u.pos, 1,
+                  mid.u.pos, vmax-vmin+1,
+                  1, mid.v.pos,
+                  umax-umin+1, mid.v.pos), byrow=TRUE, nrow=4, colnames=c("u", "v"))
+  # N, S, W, E positions in (u, v) coordinates
+  
+  thickness<-Rotopol.raw[[4]]
+  wedge<-as.data.frame(cbind(thickness, wedge))
+  # data frame for determining wedging
+  
+  wedge.f<-lm(thickness ~ u*v, data=wedge)
+  # linear fit for wedging
+  
+  u.v.pos<-expand.grid(1:umax-umin+1,1:vmax-vmin+1)
+  colnames(u.v.pos)<-c("u", "v")
+  # pixel positions for per-pixel thickness estimate
+  
+  pix.thickness<-matrix(predict(wedge.f, u.v.pos), nrow=umax-umin+1)
+  Rotopol.raw[[4]]<-pix.thickness
+  # pixel thickness estimates
+  
+  setWinProgressBar(pb, 6, title="Rotopol.qPLM: writing array: I")
+  Rotopol.distilled[,,1]<-t(as.matrix(Rotopol.raw[[1]][,,2]/255))
+  # transmittance pixels scaled to 0-1 range
+  
+  setWinProgressBar(pb, 7, title="Rotopol.qPLM: writing array: Theta")
+  Rotopol.distilled[,,2]<-t(as.matrix(asin(sqrt((asin(Rotopol.raw[[2]][,,2]/255))
+                                                *Rotopol.raw[[5]]/(2*pi*Rotopol.raw[[4]]*1000*Rotopol.raw[[6]])))))
+  # retardance pixels transformed to elevation angle (theta) mapped linearly to 0-1 range
+  
+  setWinProgressBar(pb, 8, title="Rotopol.qPLM: writing array: Phi")
+  Rotopol.distilled[,,3]<-t(as.matrix(Rotopol.raw[[3]][,,2]/255))
+  # azimuth pixels (0 degrees to 179 degrees) scaled to 0-1 range
+  
+  setWinProgressBar(pb, 9, title="Rotopol.qPLM: applying mask")
+  Rotopol.distilled[,,1]<-t(Rotopol.raw[[7]][,,2])*Rotopol.distilled[,,1]
+  Rotopol.distilled[,,2]<-t(Rotopol.raw[[7]][,,2])*Rotopol.distilled[,,2]
+  Rotopol.distilled[,,3]<-t(Rotopol.raw[[7]][,,2])*Rotopol.distilled[,,3]
+  # mask cutouts--only white mask pixels remain
+    
   rm(Rotopol.raw)
   gc()
   # manipulating these arrays can tax some 32-bit systems... better safe and slow than
@@ -132,7 +164,7 @@ Rotopol.qPLM<-function(sample.name,
                                       dimnames=list(paste("u",seq(length.out=length(Rotopol.distilled[,1,1])), sep=""), 
                                                     paste("v", seq(length.out=length(Rotopol.distilled[1,,1])), sep=""),
                                                     c("Trans","Theta","Phi")),
-                                      thickness_um=thickness,
+                                      thickness_um=pix.thickness,
                                       wavelength_nm=wavelength,
                                       birefringence=birefringence,
                                       pixel.size_um=pixel,
