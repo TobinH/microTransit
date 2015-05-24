@@ -1,41 +1,49 @@
 # read Rotopol (Werner Kaminsky) bitmaps into a qPLM object in R 
 # with specified parameters.
 # arguments--
-# thickness: slide thickness in microns
-# wavelength: center of analysis wavelength in nm
-# birefringence: estimated birefringence constant of ROI
+# north.thickness - east.thickness: slide thickness in microns at top center (N),
+# bottom center (S), left center (W), and right center (E) of masked element.
+
+# wavelength: center of analysis wavelength in nm. Default is 532 nm.
+
+# birefringence: estimated birefringence constant of ROI. Default is 0.005
+#    (empirically determined for extant bone tissue).
+
 # pixel: pixel size in microns--default is for E145 Leica A6 scope at 1.25x
+
 # up: if the image is skewed, up is whatever direction you want to assign 
 #   to the top, as a compass heading in degrees
 #   (1-359--extremes are 90 for the right side, 180 for bottom, 270 for left)
+
 # mask: Loads a black-and-white bitmap that defines a region of interest. 
 #   Black pixels (0) will be dropped, 
 #   to allow you to choose the mask file.
+
 # pics.out: if TRUE, returns single-channel greyscale .tiffs 
 #   and a PolarLUV composite .tiff
-# mono.bkgrnd: Gray level for single channel backgrounds (0-100). 
-#   Default is white (0).
-# comp.bkgrnd: Gray level for composite background (0-100, 100 is black). Default 
-#   is 50% gray (50)
-# theta.scale: if TRUE, scales "_overview.tif" image color scale to  peak at maximum theta value
-#   (default is FALSE)
-# theta.max: if theta.scale is FALSE, specified upper end (degrees) for "_overview.tif" color scale
-#   (default is 90 degrees).
-# invert.theta.scale: if TRUE, bright colors pointing toward viewer, brightness falls off as orientations go
-#   to parallel with the slide. Useful for sections with predominantly out-of-plane fibers (default is FALSE)
+
+# theta.scale: if TRUE, scales "_overview.tif" image color scale to
+#   peak at maximum theta value (default is FALSE).
+
+# theta.max: if theta.scale is FALSE, specified upper end (degrees) 
+#   for "_overview.tif" color scale (default is 90 degrees).
+
+# invert.theta.scale: if TRUE, bright colors pointing toward viewer, 
+#   brightness falls off as orientations go to parallel with the slide. 
+#   Useful for sections with predominantly out-of-plane fibers 
+#   (default is FALSE).
 
 Rotopol.qPLM<-function(sample.name, 
                        north.thickness, 
                        south.thickness,
                        west.thickness,
                        east.thickness,
-                       wavelength, 
-                       birefringence, 
+                       wavelength=532, 
+                       birefringence=0.005, 
                        pixel=7.5832259, 
                        up=0, 
-                       mask=FALSE, 
-                       pics.out=TRUE, 
-                       comp.bkgrnd=50,
+                       mask=TRUE, 
+                       pics.out=TRUE,
                        theta.scale=FALSE,
                        theta.max=90,
                        invert.theta.scale=FALSE) {
@@ -44,7 +52,8 @@ Rotopol.qPLM<-function(sample.name,
   require(EBImage)
   
   Rotopol.raw<-vector("list", 7)
-  # create an object to hold Rotopol bitmap values and other measured/estimated parameters
+  # create an object to hold Rotopol bitmap values 
+  # and other measured/estimated parameters
   
   bmpfiles<-choose.files(default="", caption="Select a0, a1, and a2 bitmaps",
                          multi=TRUE)
@@ -58,9 +67,11 @@ Rotopol.qPLM<-function(sample.name,
   bmpfiles<-bmpfiles[order(bmpfiles)]
   # slots Rotopol a0-a2 bitmaps into numerical order
   
-  pb <- winProgressBar(title="Rotopol.PLM", min = 0,
+  pb<-winProgressBar(title="Rotopol.PLM", min = 0,
                        max = 19, width = 300)
-  # (Windows) create a progress bar--mostly an instant-feedback debugging tool, some operations can be time-consuming
+  # (Windows) create a progress bar--
+  # mostly an instant-feedback debugging tool, 
+  # some operations can be time-consuming
   
   setWinProgressBar(pb, 1, title="Rotopol.qPLM: reading I")
   Rotopol.raw[[1]]<-read.bmp(bmpfiles[1])
@@ -74,102 +85,113 @@ Rotopol.qPLM<-function(sample.name,
   Rotopol.raw[[3]]<-read.bmp(bmpfiles[3])
   # read a2 bitmap (azimuth, phi)
   
-  setWinProgressBar(pb, 4, title="Rotopol.qPLM: trimming to mask")
+  setWinProgressBar(pb, 4, title="Rotopol.qPLM: applying mask")
       
-  ifelse(mask, Rotopol.raw[[7]]<-read.bmp(maskfile)/255, Rotopol.raw[[7]]<-array(1,dim=dim(Rotopol.raw[[1]])))
+  ifelse(mask, 
+         Rotopol.raw[[7]]<-read.bmp(maskfile)/255, 
+         Rotopol.raw[[7]]<-array(1,dim=dim(Rotopol.raw[[1]])))
   # read mask or create blank mask object
     
-  dindx<-which(t(Rotopol.raw[[7]][,,2])>1/255, arr.ind=TRUE)
+  dindx<-which(Rotopol.raw[[7]][,,2]>1/255, arr.ind=TRUE)
   # index of masked pixels
   
   ifelse(as.logical(min(dindx[,1])<10),
-         vmin<-1,
-         vmin<-min(dindx[,1])-10)
-  ifelse(as.logical(max(dindx[,1])>dim(Rotopol.raw[[7]])[1]-10),
-         vmax<-dim(Rotopol.raw[[7]])[1],
-         vmax<-max(dindx[,1])+10)
-  ifelse(as.logical(min(dindx[,2])<10),
          umin<-1,
-         umin<-min(dindx[,2])-10)
+         umin<-min(dindx[,1])-10)
+  ifelse(as.logical(max(dindx[,1])>dim(Rotopol.raw[[7]])[1]-10),
+         umax<-dim(Rotopol.raw[[7]])[1],
+         umax<-max(dindx[,1])+10)
+  ifelse(as.logical(min(dindx[,2])<10),
+         vmin<-1,
+         vmin<-min(dindx[,2])-10)
   ifelse(as.logical(max(dindx[,2])>dim(Rotopol.raw[[7]])[2]-10),
-         umax<-dim(Rotopol.raw[[7]])[2],
-         umax<-max(dindx[,2])+10)
+         vmax<-dim(Rotopol.raw[[7]])[2],
+         vmax<-max(dindx[,2])+10)
   
-  Rotopol.raw[[1]]<-Rotopol.raw[[1]][vmin:vmax, umin:umax,]
-  Rotopol.raw[[2]]<-Rotopol.raw[[2]][vmin:vmax, umin:umax,]
-  Rotopol.raw[[3]]<-Rotopol.raw[[3]][vmin:vmax, umin:umax,]
-  Rotopol.raw[[7]]<-Rotopol.raw[[7]][vmin:vmax, umin:umax,]
+  Rotopol.raw[[7]]<-as.matrix(Rotopol.raw[[7]][umin:umax, vmin:vmax,2])
+  Rotopol.raw[[1]]<-as.matrix(Rotopol.raw[[1]][umin:umax, vmin:vmax,2]
+                              *Rotopol.raw[[7]])
+  Rotopol.raw[[2]]<-as.matrix(Rotopol.raw[[2]][umin:umax, vmin:vmax,2]
+                              *Rotopol.raw[[7]])
+  Rotopol.raw[[3]]<-as.matrix(Rotopol.raw[[3]][umin:umax, vmin:vmax,2]
+                              *Rotopol.raw[[7]])
   # trim image arrays to non-zero pixels with a 10-pixel blank border
     
-  Rotopol.distilled<-array(data=NA, c(dim(Rotopol.raw[[1]])[2],dim(Rotopol.raw[[1]])[1],3))
-  # create ouput object array
+  Rotopol.distilled<-array(data=NA, 
+                           c(dim(Rotopol.raw[[1]])[2], 
+                             dim(Rotopol.raw[[1]])[1], 3))
+  # create output object array
   
-  setWinProgressBar(pb, 5, title="Rotopol.qPLM: parameters")
+  setWinProgressBar(pb, 5, title="Rotopol.qPLM: applying parameters")
   
-  Rotopol.raw[[4]]<-as.numeric(c(north.thickness, south.thickness, west.thickness, east.thickness))
+  thickness<-as.numeric(c(north.thickness,
+                          south.thickness,
+                          west.thickness,
+                          east.thickness))
   Rotopol.raw[[5]]<-as.numeric(wavelength)
   Rotopol.raw[[6]]<-as.numeric(birefringence)
   # parameters from arguments
   
-  mid.u.pos<-ceiling((umax-umin)/2)
-  mid.v.pos<-ceiling((vmax-vmin)/2)
+  mid.u.pos<-ceiling((umax-umin+1)/2)
+  mid.v.pos<-ceiling((vmax-vmin+1)/2)
   # center N, S, W, E positions for trimmed arrays
   
-  wedge<-matrix(c(mid.u.pos, 1,
-                  mid.u.pos, vmax-vmin+1,
-                  1, mid.v.pos,
-                  umax-umin+1, mid.v.pos), byrow=TRUE, nrow=4, colnames=c("u", "v"))
+  wedge<-matrix(c(1, mid.v.pos,
+                  umax-umin+1, mid.v.pos,
+                  mid.u.pos, 1,
+                  mid.u.pos, vmax-vmin+1), 
+                byrow=TRUE, nrow=4, 
+                dimnames=list(c("N","S", "W", "E"), c("u", "v")))
   # N, S, W, E positions in (u, v) coordinates
   
-  thickness<-Rotopol.raw[[4]]
   wedge<-as.data.frame(cbind(thickness, wedge))
   # data frame for determining wedging
   
-  wedge.f<-lm(thickness ~ u*v, data=wedge)
+  wedge.f<-lm(thickness ~ u+v, data=wedge)
   # linear fit for wedging
   
-  u.v.pos<-expand.grid(1:umax-umin+1,1:vmax-vmin+1)
+  u.v.pos<-expand.grid(1:(umax-umin+1), 1:(vmax-vmin+1))
   colnames(u.v.pos)<-c("u", "v")
-  # pixel positions for per-pixel thickness estimate
+  # pixel positions for by-pixel thickness estimate
   
-  pix.thickness<-matrix(predict(wedge.f, u.v.pos), nrow=umax-umin+1)
-  Rotopol.raw[[4]]<-pix.thickness
-  # pixel thickness estimates
+  Rotopol.raw[[4]]<-matrix(predict(wedge.f, u.v.pos), nrow=umax-umin+1)
+  # by-pixel thickness estimates
   
   setWinProgressBar(pb, 6, title="Rotopol.qPLM: writing array: I")
-  Rotopol.distilled[,,1]<-t(as.matrix(Rotopol.raw[[1]][,,2]/255))
+  Rotopol.distilled[,,1]<-t(Rotopol.raw[[1]]/255)
   # transmittance pixels scaled to 0-1 range
   
   setWinProgressBar(pb, 7, title="Rotopol.qPLM: writing array: Theta")
-  Rotopol.distilled[,,2]<-t(as.matrix(asin(sqrt((asin(Rotopol.raw[[2]][,,2]/255))
-                                                *Rotopol.raw[[5]]/(2*pi*Rotopol.raw[[4]]*1000*Rotopol.raw[[6]])))))
-  # retardance pixels transformed to elevation angle (theta) mapped linearly to 0-1 range
+  Rotopol.distilled[,,2]<-t(asin
+                             (sqrt
+                                  (
+                                    (asin(Rotopol.raw[[2]]/255))
+                                    *Rotopol.raw[[5]]
+                                    /(2*pi*Rotopol.raw[[4]]
+                                      *1000
+                                      *Rotopol.raw[[6]])
+                                    )))
+  # retardance pixels transformed to elevation angle (theta) 
+  # mapped linearly to 0-1 range
   
   setWinProgressBar(pb, 8, title="Rotopol.qPLM: writing array: Phi")
-  Rotopol.distilled[,,3]<-t(as.matrix(Rotopol.raw[[3]][,,2]/255))
+  Rotopol.distilled[,,3]<-t(Rotopol.raw[[3]]/255)
   # azimuth pixels (0 degrees to 179 degrees) scaled to 0-1 range
-  
-  setWinProgressBar(pb, 9, title="Rotopol.qPLM: applying mask")
-  Rotopol.distilled[,,1]<-t(Rotopol.raw[[7]][,,2])*Rotopol.distilled[,,1]
-  Rotopol.distilled[,,2]<-t(Rotopol.raw[[7]][,,2])*Rotopol.distilled[,,2]
-  Rotopol.distilled[,,3]<-t(Rotopol.raw[[7]][,,2])*Rotopol.distilled[,,3]
-  # mask cutouts--only white mask pixels remain
-    
-  rm(Rotopol.raw)
-  gc()
-  # manipulating these arrays can tax some 32-bit systems... better safe and slow than
-  # lost in the woods with a programmer that doesn't have good error handling skills (me)
+
   
   attributes(Rotopol.distilled)<-list(dim=dim(Rotopol.distilled),
                                       dimnames=list(paste("u",seq(length.out=length(Rotopol.distilled[,1,1])), sep=""), 
                                                     paste("v", seq(length.out=length(Rotopol.distilled[1,,1])), sep=""),
                                                     c("Trans","Theta","Phi")),
-                                      thickness_um=pix.thickness,
+                                      thickness_um=Rotopol.raw[[4]],
                                       wavelength_nm=wavelength,
                                       birefringence=birefringence,
                                       pixel.size_um=pixel,
                                       ccw.skew_deg=up)
   # sets attributes for qPLM object
+ 
+  rm(Rotopol.raw)
+  gc()
   
   if (pics.out) {
     setWinProgressBar(pb, 10, title="Rotopol.qPLM: building colorspace")
@@ -189,7 +211,9 @@ Rotopol.qPLM<-function(sample.name,
     # integer combinations of theta and phi for the look-up table
     
     setWinProgressBar(pb, 11, title="Rotopol.qPLM: LUV encoding")
-    PLUV.LUT<-polarLUV((pixLUT[,1]*0.75+22.5)*theta.max/90, pixLUT[,1]*57.65/theta.max, pixLUT[,2]*360/180)
+    PLUV.LUT<-polarLUV((pixLUT[,1]*0.75+22.5)*90/theta.max, 
+                       pixLUT[,1]*57.65/theta.max, 
+                       pixLUT[,2]*360/180)
     # polar LUV colorspace encoding of each integer combination
     
     setWinProgressBar(pb, 12, title="Rotopol.qPLM: RGB translation")
@@ -253,7 +277,6 @@ Rotopol.qPLM<-function(sample.name,
     display(output)
     # pull up overview image in browser window
     
-    print("calibrated images written to working directory")
   }
   setWinProgressBar(pb, 19, title="Rotopol.qPLM: done!")
   close(pb)
@@ -266,4 +289,4 @@ Rotopol.qPLM<-function(sample.name,
   # may be overkill, but see above
 }
 
-# test<-Rotopol.qPLM("test", 15, 532, 0.005)
+# test<-Rotopol.qPLM("test", 15, 15, 15, 15, 532, 0.005)
