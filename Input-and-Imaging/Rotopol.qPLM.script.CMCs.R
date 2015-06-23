@@ -8,8 +8,8 @@
 
 # mask.glob: string to direct Sys.glob() to mask bitmap.
 
-# north.thickness - east.thickness: slide thickness in microns at top center (N),
-# bottom center (S), left center (W), and right center (E) of masked element.
+# nw.thickness - ne.thickness: slide thickness in microns at top left (NW),
+# bottom right (SE), bottom left (SW), and top right (NE) of masked element.
 
 # wavelength: center of analysis wavelength in nm. Default is 532 nm.
 
@@ -40,13 +40,13 @@
 #   Useful for sections with predominantly out-of-plane fibers 
 #   (default is FALSE).
 
-Rotopol.qPLM.script<-function(sample.name,
+Rotopol.qPLM.script<-function(sample.name=NULL,
                        bitmap.glob,
                        mask.glob=NULL,
-                       north.thickness, 
-                       south.thickness,
-                       west.thickness,
-                       east.thickness,
+                       nw.thickness, 
+                       se.thickness,
+                       sw.thickness,
+                       ne.thickness,
                        wavelength=532, 
                        birefringence=0.005, 
                        pixel=7.5832259, 
@@ -132,25 +132,21 @@ Rotopol.qPLM.script<-function(sample.name,
   
   setWinProgressBar(pb, 5, title="Rotopol.qPLM: applying parameters")
   
-  thickness<-as.numeric(c(north.thickness,
-                          south.thickness,
-                          west.thickness,
-                          east.thickness))
+  thickness<-as.numeric(c(nw.thickness,
+                          se.thickness,
+                          sw.thickness,
+                          ne.thickness))
   Rotopol.raw[[5]]<-as.numeric(wavelength)
   Rotopol.raw[[6]]<-as.numeric(birefringence)
   # parameters from arguments
   
-  mid.u.pos<-ceiling((umax-umin+1)/2)
-  mid.v.pos<-ceiling((vmax-vmin+1)/2)
-  # center N, S, W, E positions for trimmed arrays
-  
-  wedge<-matrix(c(1, mid.v.pos,
-                  umax-umin+1, mid.v.pos,
-                  mid.u.pos, 1,
-                  mid.u.pos, vmax-vmin+1), 
+   wedge<-matrix(c(1, 1,
+                  umax-umin+1, vmax-vmin+1,
+                  umax-umin+1, 1,
+                  1, vmax-vmin+1), 
                 byrow=TRUE, nrow=4, 
-                dimnames=list(c("N","S", "W", "E"), c("u", "v")))
-  # N, S, W, E positions in (u, v) coordinates
+                dimnames=list(c("NW","SE", "SW", "NE"), c("u", "v")))
+  # NW, SE, SW, NE positions in (u, v) coordinates
   
   wedge<-as.data.frame(cbind(thickness, wedge))
   # data frame for determining wedging
