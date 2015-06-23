@@ -40,7 +40,7 @@
 #   Useful for sections with predominantly out-of-plane fibers 
 #   (default is FALSE).
 
-Rotopol.qPLM.script<-function(sample.name=NULL,
+Rotopol.qPLM.script.CMCs<-function(sample.name=NULL,
                        bitmap.glob,
                        mask.glob=NULL,
                        nw.thickness, 
