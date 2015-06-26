@@ -35,34 +35,36 @@ elastic.model<-function(r.qPLMtab,
   # linear orthotropic stiffness matrix from Speisz and Zysset 2015
   compliance.lo<-solve(stiffness.lo)
   # linear orthotropic compliance matrix
-  sig.zx<-mass*sin(atan2(r.qPLMtab[,6],r.qPLMtab[,7]))*sqrt(r.qPLMtab[,6]^2+r.qPLMtab[,7]^2)/J
-  sig.zy<-mass*cos(atan2(r.qPLMtab[,6],r.qPLMtab[,7]))*sqrt(r.qPLMtab[,6]^2+r.qPLMtab[,7]^2)/J
+  sig.zx<-mass*sin(atan2(r.qPLMtab[,7],r.qPLMtab[,6]))*sqrt((r.qPLMtab[,6]^2)+(r.qPLMtab[,7]^2))/J
+  sig.zy<-mass*cos(atan2(r.qPLMtab[,7],r.qPLMtab[,6]))*sqrt((r.qPLMtab[,6]^2)+(r.qPLMtab[,7]^2))/J
   # zx and zy torsional stress components modeled proportional to mass
   result<-matrix(0, nrow=nrow(r.qPLMtab), ncol=5)
   result[,1:2]<-r.qPLMtab[,6:7]
   
   for (i in 1:nrow(r.qPLMtab)){
-    stress<-matrix(c(0, 0, sig.zx[i],
-                     0, 0, sig.zy[i],
+    stress<-matrix(c(0, 0, -sig.zx[i],
+                     0, 0, -sig.zy[i],
                      sig.zx[i],sig.zy[i],0), nrow=3)
     # estimated stress in matrix notation
-    Rz<-matrix(c(-cos(r.qPLMtab[i,2]),-sin(r.qPLMtab[i,2]),0,
-                 sin(r.qPLMtab[i,2]),-cos(r.qPLMtab[i,2]),0,
-                 0,0,0), nrow=3)
+    voigt.stress.iso<-matrix(c(stress[1,1],stress[2,2],stress[3,3],stress[2,3],stress[1,3],stress[1,2]), nrow=6)
+    # voigt notation of stress
+    Rz<-matrix(c(-cos(r.qPLMtab[i,2]),sin(r.qPLMtab[i,2]),0,
+                 -sin(r.qPLMtab[i,2]),-cos(r.qPLMtab[i,2]),0,
+                 0,0,1), nrow=3)
     # rotation matrix about z
     Rx<-matrix(c(1,0,0,
                  0,cos(r.qPLMtab[i,1]),sin(r.qPLMtab[i,1]),
-                 0,sin(r.qPLMtab[i,1]),cos(r.qPLMtab[i,1])), nrow=3)
+                 0,-sin(r.qPLMtab[i,1]),cos(r.qPLMtab[i,1])), nrow=3)
     # rotation matrix about x
-    stress<-Rz%*%stress%*%t(Rz)
+    stress.lo<-Rz%*%stress%*%t(Rz)
     # stress rotated in z
-    stress<-Rx%*%stress%*%t(Rx)
+    stress.lo<-Rx%*%stress.lo%*%t(Rx)
     # stress rotated in x
-    voigt.stress<-matrix(c(stress[1,1],stress[2,2],stress[3,3],stress[2,3],stress[1,3],stress[1,2]), nrow=6)
-    # voigt notation of aligned stress
-    voigt.strain.iso<-compliance.iso%*%voigt.stress
+    voigt.stress.lo<-matrix(c(stress.lo[1,1],stress.lo[2,2],stress.lo[3,3],stress.lo[2,3],stress.lo[1,3],stress.lo[1,2]), nrow=6)
+    # voigt notation of linear isotropic stress
+    voigt.strain.iso<-compliance.iso%*%voigt.stress.iso
     # strain given isotropic matrix
-    voigt.strain.lo<-compliance.lo%*%voigt.stress
+    voigt.strain.lo<-compliance.lo%*%voigt.stress.lo
     # strain given linear orthotropic matrix
     strain.iso<-matrix(c(voigt.strain.iso[1,1], voigt.strain.iso[6,1], voigt.strain.iso[5,1],
                        voigt.strain.iso[6,1], voigt.strain.iso[2,1], voigt.strain.iso[4,1],
@@ -72,10 +74,6 @@ elastic.model<-function(r.qPLMtab,
                         voigt.strain.lo[6,1], voigt.strain.lo[2,1], voigt.strain.lo[4,1],
                         voigt.strain.lo[5,1], voigt.strain.lo[4,1], voigt.strain.lo[3,1]), nrow=3)
     # linear orthotropic material strain into 3x3 matrix form
-    strain.iso<-t(Rx)%*%strain.iso%*%Rx
-    # rotation about x back to global reference frame
-    strain.iso<-t(Rz)%*%strain.iso%*%Rz
-    # rotation about z back to global reference frame
     strain.lo<-t(Rx)%*%strain.lo%*%Rx
     # rotation about x back to global reference frame
     strain.lo<-t(Rz)%*%strain.lo%*%Rz
