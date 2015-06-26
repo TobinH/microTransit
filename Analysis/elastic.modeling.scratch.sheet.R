@@ -13,8 +13,80 @@
 #    a. predicted bending strain intensity (iso, ortho, diff)
 #    b. predicted torsion strain intensity (iso, ortho, diff)
 
-
-SZ15.lvl4.compliance<-matrix(c(7.02, 3.30, 5.87,0,0,0,3.30,7.02,5.87,0,0,0,5.87,5.87,22.17,0,0,0,0,0,0,6.6,0,0,0,0,0,0,6.6,0,0,0,0,0,0,3.72), nrow=6)
-
-SZ15.lvl4.stiffness<-solve(SZ15.lvl4.compliance)
-
+elastic.model<-function(r.qPLMtab,
+                        mass,
+                        J){
+  norm<-(1/20)
+  pois<-(-0.4/20)
+  shear<-(1.4/20)
+  compliance.iso<-matrix(c(norm, pois, pois,0,0,0,
+                         pois,norm,pois,0,0,0,
+                         pois,pois,norm,0,0,0,
+                         0,0,0,shear,0,0,
+                         0,0,0,0,shear,0,
+                         0,0,0,0,0,shear), nrow=6)
+  # isotropic compliance matrix, estimates of E and v from Carter
+  stiffness.lo<-matrix(c(7.02, 3.30, 5.87,0,0,0,
+                         3.30,7.02,5.87,0,0,0,
+                         5.87,5.87,22.17,0,0,0,
+                         0,0,0,6.6,0,0,
+                         0,0,0,0,6.6,0,
+                         0,0,0,0,0,3.72), nrow=6)
+  # linear orthotropic stiffness matrix from Speisz and Zysset 2015
+  compliance.lo<-solve(stiffness.lo)
+  # linear orthotropic compliance matrix
+  sig.zx<-mass*sin(atan2(r.qPLMtab[,6],r.qPLMtab[,7]))*sqrt(r.qPLMtab[,6]^2+r.qPLMtab[,7]^2)/J
+  sig.zy<-mass*cos(atan2(r.qPLMtab[,6],r.qPLMtab[,7]))*sqrt(r.qPLMtab[,6]^2+r.qPLMtab[,7]^2)/J
+  # zx and zy torsional stress components modeled proportional to mass
+  result<-matrix(0, nrow=nrow(r.qPLMtab), ncol=5)
+  result[,1:2]<-r.qPLMtab[,6:7]
+  
+  for (i in 1:nrow(r.qPLMtab)){
+    stress<-matrix(c(0, 0, sig.zx[i],
+                     0, 0, sig.zy[i],
+                     sig.zx[i],sig.zy[i],0), nrow=3)
+    # estimated stress in matrix notation
+    Rz<-matrix(c(-cos(r.qPLMtab[i,2]),-sin(r.qPLMtab[i,2]),0,
+                 sin(r.qPLMtab[i,2]),-cos(r.qPLMtab[i,2]),0,
+                 0,0,0), nrow=3)
+    # rotation matrix about z
+    Rx<-matrix(c(1,0,0,
+                 0,cos(r.qPLMtab[i,1]),sin(r.qPLMtab[i,1]),
+                 0,sin(r.qPLMtab[i,1]),cos(r.qPLMtab[i,1])), nrow=3)
+    # rotation matrix about x
+    stress<-Rz%*%stress%*%t(Rz)
+    # stress rotated in z
+    stress<-Rx%*%stress%*%t(Rx)
+    # stress rotated in x
+    voigt.stress<-matrix(c(stress[1,1],stress[2,2],stress[3,3],stress[2,3],stress[1,3],stress[1,2]), nrow=6)
+    # voigt notation of aligned stress
+    voigt.strain.iso<-compliance.iso%*%voigt.stress
+    # strain given isotropic matrix
+    voigt.strain.lo<-compliance.lo%*%voigt.stress
+    # strain given linear orthotropic matrix
+    strain.iso<-matrix(c(voigt.strain.iso[1,1], voigt.strain.iso[6,1], voigt.strain.iso[5,1],
+                       voigt.strain.iso[6,1], voigt.strain.iso[2,1], voigt.strain.iso[4,1],
+                       voigt.strain.iso[5,1], voigt.strain.iso[4,1], voigt.strain.iso[3,1]), nrow=3)
+    # isotropic material strain into 3x3 matrix form
+    strain.lo<-matrix(c(voigt.strain.lo[1,1], voigt.strain.lo[6,1], voigt.strain.lo[5,1],
+                        voigt.strain.lo[6,1], voigt.strain.lo[2,1], voigt.strain.lo[4,1],
+                        voigt.strain.lo[5,1], voigt.strain.lo[4,1], voigt.strain.lo[3,1]), nrow=3)
+    # linear orthotropic material strain into 3x3 matrix form
+    strain.iso<-t(Rx)%*%strain.iso%*%Rx
+    # rotation about x back to global reference frame
+    strain.iso<-t(Rz)%*%strain.iso%*%Rz
+    # rotation about z back to global reference frame
+    strain.lo<-t(Rx)%*%strain.lo%*%Rx
+    # rotation about x back to global reference frame
+    strain.lo<-t(Rz)%*%strain.lo%*%Rz
+    # rotation about z back to global reference frame
+    torsion.mag.iso<-sqrt(strain.iso[3,1]^2+strain.iso[3,2]^2)
+    # magnitude of torsional strain with isotropic material
+    torsion.mag.lo<-sqrt(strain.lo[3,1]^2+strain.lo[3,2]^2)
+    # magnitude of torsional strain with linear orthotropic material
+    torsion.diff<-torsion.mag.iso-torsion.mag.lo
+    result[i,3:5]<-c(torsion.mag.iso, torsion.mag.lo, torsion.diff)
+  }
+  invisible(result)
+  return(result)
+}

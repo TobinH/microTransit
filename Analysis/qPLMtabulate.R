@@ -23,12 +23,12 @@ qPLMtabulate<-function(x,low.pass=5/256){
   # pixel orientation y
   tabulated.data[,5]<-cos(tabulated.data[,1])
   # pixel orientation z
-  tabulated.data[,6]<-nz.pix[,1]*attr(x,"pix")/1000000
-  # pixel x position in image, calibrated to m
-  tabulated.data[,7]<-nz.pix[,2]*attr(x,"pix")/1000000
-  # pixel y position in image, calibrated to to m
-  tabulated.data[,8]<-nz.pix[,1]%/%4*attr(x,"pix")/1000000
-  # pixel x position in 4x4 downsampled distances, calibrated to m
+  tabulated.data[,6]<-nz.pix[,1]*attr(x,"pix")/1000
+  # pixel x position in image, calibrated to mm
+  tabulated.data[,7]<-nz.pix[,2]*attr(x,"pix")/1000
+  # pixel y position in image, calibrated to to mm
+  tabulated.data[,8]<-nz.pix[,1]%/%4*attr(x,"pix")/1000
+  # pixel x position in 4x4 downsampled distances, calibrated to mm
   tabulated.data[,9]<-nz.pix[,2]%/%4*attr(x,"pix")/1000000
   # pixel y position in 4x4 downsampled distances, calibrated to m
   results$pixels<-tabulated.data
