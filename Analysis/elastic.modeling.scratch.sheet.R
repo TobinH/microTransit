@@ -38,7 +38,7 @@ elastic.model<-function(r.qPLMtab,
   sig.zx<-mass*sin(atan2(r.qPLMtab[,7],r.qPLMtab[,6]))*sqrt((r.qPLMtab[,6]^2)+(r.qPLMtab[,7]^2))/J
   sig.zy<-mass*cos(atan2(r.qPLMtab[,7],r.qPLMtab[,6]))*sqrt((r.qPLMtab[,6]^2)+(r.qPLMtab[,7]^2))/J
   # zx and zy torsional stress components modeled proportional to mass
-  result<-matrix(0, nrow=nrow(r.qPLMtab), ncol=5)
+  result<-matrix(0, nrow=nrow(r.qPLMtab), ncol=8)
   result[,1:2]<-r.qPLMtab[,6:7]
   
   for (i in 1:nrow(r.qPLMtab)){
@@ -78,13 +78,14 @@ elastic.model<-function(r.qPLMtab,
     # rotation about x back to global reference frame
     strain.lo<-t(Rz)%*%strain.lo%*%Rz
     # rotation about z back to global reference frame
-    torsion.mag.iso<-sqrt(strain.iso[3,1]^2+strain.iso[3,2]^2)
+    torsion.mag.iso<-sqrt((strain.iso[3,1]^2)+(strain.iso[3,2]^2))
     # magnitude of torsional strain with isotropic material
-    torsion.mag.lo<-sqrt(strain.lo[3,1]^2+strain.lo[3,2]^2)
+    torsion.mag.lo<-sqrt((strain.lo[3,1]^2)+(strain.lo[3,2]^2))
     # magnitude of torsional strain with linear orthotropic material
     torsion.diff<-torsion.mag.iso-torsion.mag.lo
     result[i,3:5]<-c(torsion.mag.iso, torsion.mag.lo, torsion.diff)
   }
+  result[,6:8]<-result[,3:5]/sqrt((result[,1]^2)+(result[,2]^2))
   invisible(result)
   return(result)
 }

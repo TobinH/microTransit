@@ -1,6 +1,6 @@
 # elastic model plotting
 
-elastic.plot<-function(elastic){
+elastic.plot<-function(elastic,scaled=FALSE){
   require(ade4)
   oldpar<-par(no.readonly=TRUE)
   par(mfrow=c(1,3))
@@ -41,7 +41,7 @@ elastic.plot<-function(elastic){
     }
     method <- method[1]
     if (method == "greylevel") {
-      br0 <- pretty(z, 6)
+      br0 <- pretty(z, 20)
       nborn <- length(br0)
       coeff <- diff(par("usr")[1:2])/15
       numclass <- cut.default(z, br0, include.lowest = TRUE, 
@@ -93,8 +93,14 @@ elastic.plot<-function(elastic){
       box()
     invisible(match.call())
   }
-  for(i in 1:3) {
-    s.value.tweak(xy,elastic[,i+2],method="greylevel",csize=0.05,grid=FALSE,addaxes=FALSE,include.origin=FALSE)
+  if (scaled){
+    for(i in 1:3) {
+      s.value.tweak(xy,elastic[,i+5],method="greylevel",csize=0.05,grid=FALSE,addaxes=FALSE,include.origin=FALSE)
+    }
+  }else{
+    for(i in 1:3) {
+      s.value.tweak(xy,elastic[,i+2],method="greylevel",csize=0.05,grid=FALSE,addaxes=FALSE,include.origin=FALSE)
+    }
   }
   par(oldpar)
   return()
