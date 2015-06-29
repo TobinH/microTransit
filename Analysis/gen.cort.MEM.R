@@ -6,11 +6,11 @@
 # returns an (n x p+4) matrix of (x,y,z) pixel orientation, a column of 1s, 
 #   p spatial eigenfunction scores for n pixels (qPLM + Moran's Eigenvector Map)
 
-gen.cort.MEM<-function(maps=300) {
+gen.cort.MEM<-function(rad.bin,half.centr.bin,maps=300) {
   require(ape)
   require(vegan)
   require(igraph)
-  cort<-expand.grid(1:360,-15:15)
+  cort<-expand.grid(1:rad.bin,-half.centr.bin:half.centr.bin)
   pb<-winProgressBar(title=paste("gen.cort.MEM", 
                                  format(Sys.time(), format="%H:%M")), 
                      min=0, max= 10, width=400)
@@ -67,7 +67,7 @@ gen.cort.MEM<-function(maps=300) {
                     title=paste("gen.cort.MEM: matching eigenfunctions to bins"
                                 ,format(Sys.time(), format="%H:%M")))
   fnam <- paste("f_", 1:ncol(evecs),sep="")
-  colnames(evec)<-fnam
+  colnames(evecs)<-fnam
   posnam<-c("radial","centrifugal")
   colnames(cort)<-posnam
   results<-as.matrix(cbind(cort,evecs))
