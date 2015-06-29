@@ -2,7 +2,6 @@
 # spatial comparison (for ISPH 2015). Follow this function with compliance matrix
 # modeling.
 
-# begin with 3 degree radial bins:
 
 spatial.model<-function(qPLMtab,rad.bin,half.centr.bin){
   results<-matrix(data=0,nrow=nrow(qPLMtab$pixels),ncol=10)

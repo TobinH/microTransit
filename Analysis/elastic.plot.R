@@ -1,6 +1,12 @@
 # elastic model plotting
 
-elastic.plot<-function(elastic,scaled=FALSE){
+elastic.plot<-function(elastic,
+                       scaled=FALSE,
+                       pdf=FALSE,
+                       filename,
+                       width=9,
+                       height=7,
+                       pointsize=8){
   require(ade4)
   oldpar<-par(no.readonly=TRUE)
   par(mfrow=c(1,3))
@@ -93,6 +99,9 @@ elastic.plot<-function(elastic,scaled=FALSE){
       box()
     invisible(match.call())
   }
+  if (pdf) {
+    pdf(file=filename, width=width, height=height, pointsize=pointsize)    
+  }
   if (scaled){
     for(i in 1:3) {
       s.value.tweak(xy,elastic[,i+5],method="greylevel",csize=0.05,grid=FALSE,addaxes=FALSE,include.origin=FALSE)
@@ -101,6 +110,9 @@ elastic.plot<-function(elastic,scaled=FALSE){
     for(i in 1:3) {
       s.value.tweak(xy,elastic[,i+2],method="greylevel",csize=0.05,grid=FALSE,addaxes=FALSE,include.origin=FALSE)
     }
+  }
+  if (pdf){
+    dev.off()
   }
   par(oldpar)
   return()
