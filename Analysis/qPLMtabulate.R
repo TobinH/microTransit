@@ -2,6 +2,9 @@
 # note that as of 4 Feb 15 microtransitqPLM is not a defined object class
 # seems like a natural progression, but one thing at a time
 # arguments--
+
+# add dimension names for output
+
 # x: qPLMobj
 # low.pass: remove noisy low theta pixels
 
@@ -33,5 +36,6 @@ qPLMtabulate<-function(x,low.pass=5/256){
   # pixel y position in 4x4 downsampled distances, calibrated to m
   results$pixels<-tabulated.data
   results$distance<-fourx.pos
+  colnames(results$pixels)<-c("theta", "phi", "x", "y", "z", "u", "v", "4x4u", "4x4v")
   return(results)
 }
