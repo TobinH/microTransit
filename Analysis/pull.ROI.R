@@ -1,7 +1,8 @@
 # subsampling qPLM objects
 # arguments:
 #  qPLM: a qPLM object
-#  layer: value from 1-3, 1 = I, 2 = theta, 3 = phi
+#  layer: value from 1-3; this is the layer to display for selecting ROI (1 = I, 2 = theta, 3 = phi).
+#         *subsample from ROI will include all of the 'stacked' layers from the qPLM object. 
 pull.ROI<-function(qPLM, layer){
   require(EBImage)
   sel<-"n"
