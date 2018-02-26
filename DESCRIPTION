@@ -1,0 +1,16 @@
+Package: microTransit
+Type: Package
+Title: Quantitative Polarized Light Imaging and Analysis Tools
+Version: 0.3.3
+Author: Tobin L. Hieronymus
+Maintainer: Tobin Hieronymus <h.tobin@gmail.com>
+Imports: EBImage, abind, bmp, colorspace, parallel, doParallel, foreach, raster, spdep, tiff
+Description: This package provides tools for measuring, analyzing, and illustrating 
+    3D orientation with transmitted polarized light. The tools in this package were 
+    designed for the analysis of bone and connective tissue by microscopy on thin 
+    sections, but the basic functions can be extended to assess orientation in any 
+    birefringent material.
+License: GPL (>= 3)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
