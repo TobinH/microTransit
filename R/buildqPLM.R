@@ -1,4 +1,4 @@
-# Hieronymus Lab 1/1/18
+# Hieronymus Lab 6/11/18
 
 #' @title Build qPLMarr Object From Rotating Analyzer Images.
 #'
@@ -31,6 +31,12 @@
 #'   specimen face. If the specimen can be assumed to have a constant thickness
 #'   across the field of view, the N value will be used to fill in S, W, & E by
 #'   default.
+#'
+#' @param south.thickness 'South' (bottom) edge thickness.
+#'
+#' @param west.thickness 'West' (left) edge thickness.
+#'
+#' @param east.thickness 'East' (right) edge thickness.
 #'
 #' @param wavelength The center of the illumination wavelength. Default is a
 #'   532nm green filter.
@@ -76,10 +82,15 @@
 #'   optical imaging system for birefringent media. \emph{Proc R Soc A
 #'   452(1955)}: 2751 - 2765.
 #'
+#'   Kaminsky, W., Gunn, E., Sours, R., and Kahr, B., 2007. Simultaneous
+#'   false-colour imaging of birefringence, extinction and transmittance
+#'   at camera speed. \emph{J Microsc 228(2)}: 153 - 164.
+#'
 #' @examples
 #' oldwd<-getwd()
 #' setwd(system.file("extdata", package = "microTransit"))
-#' testqPLMarr<-buildqPLM(steps = 6, tiffs.glob = "OsteonImg*", mask.glob = "OsteonMask*", north.thickness = 40)
+#' testqPLMarr<-buildqPLM(steps = 6, tiffs.glob = "OsteonImg*",
+#'                         mask.glob = "OsteonMask*", north.thickness = 40)
 #' save(testqPLMarr, "testqPLMarr.R")
 #' setwd(oldwd)
 #' qPLMTiff("testqPLM", testqPLMarr)
@@ -165,19 +176,19 @@ buildqPLM<-function(steps = 6,
   ushiftstop<-(dim(image.raw[[1]])[2]-pixelshift)
 
 
-  image.raw[[2]]<-array(data=NA,
-                        c(dim(image.test)[1]-(2*pixelshift),
-                          dim(image.test)[2]-(2*pixelshift),
-                          6,
-                          3))
-
-  image.raw[[2]][,,1,]<-image.raw[[1]][vshiftstart:vshiftstop,
-                                       ushiftstart:ushiftstop,
-                                       1,]
-
   if (pixelshift != 0){
 
     print("Aligning Input Images")
+
+    image.raw[[2]]<-array(data=NA,
+                          c(dim(image.test)[1]-(2*pixelshift),
+                            dim(image.test)[2]-(2*pixelshift),
+                            steps,
+                            3))
+
+    image.raw[[2]][,,1,]<-image.raw[[1]][vshiftstart:vshiftstop,
+                                         ushiftstart:ushiftstop,
+                                         1,]
 
     alignmentArray<-array(data = NA, dim = c(pixelshift*2+1,
                                              pixelshift*2+1,
@@ -230,9 +241,14 @@ buildqPLM<-function(steps = 6,
                                              (ushiftstop+sum(shiftMatrix[1:(p-1),2])),
                                            p,]
     }
+  } else {
+    image.raw[[2]]<-image.raw[[1]][vshiftstart:vshiftstop,
+                                   ushiftstart:ushiftstop,
+                                   ,]
   }
 
-
+  #image.raw[[1]]<-NULL
+  #gc()
 
   # read mask or create blank mask object
   ifelse(mask,
@@ -266,8 +282,8 @@ buildqPLM<-function(steps = 6,
   image.raw[[maskIdx]]<-image.raw[[maskIdx]][umin:umax, vmin:vmax]
   image.raw[[2]]<-image.raw[[2]][umin:umax, vmin:vmax,,]
 
-  for (i in 1:steps){
-    image.raw[[2]][,,i,1]<-image.raw[[2]][,,i,1]*image.raw[[maskIdx]]
+  for (q in 1:steps){
+    image.raw[[2]][,,q,1]<-image.raw[[2]][,,q,1]*image.raw[[maskIdx]]
   }
 
   print(Sys.time() - placeT)
@@ -314,7 +330,7 @@ buildqPLM<-function(steps = 6,
 
   # stack for each image
   for (i in 1:steps){
-    a.phi<-(i)*(pi/steps)
+    a.phi<-(i-1)*(pi/steps)
     image.raw[[2]][,,i,]<-abind::abind(image.raw[[2]][,,i,1],
                                        image.raw[[2]][,,i,1]*sin(2*a.phi),
                                        image.raw[[2]][,,i,1]*cos(2*a.phi),
@@ -344,7 +360,7 @@ buildqPLM<-function(steps = 6,
   #fill a1: sum of signal*sin(2*a.phi) over (steps/2)
   for (i in 1:length(image.raw[[2]][,1,1,1])){
     for (j in 1:length(image.raw[[2]][1,,1,1])){
-      image.raw[[derIdx]][i,j,2]<-sum(image.raw[[2]][i,j,,2])/(steps/2)
+      image.raw[[derIdx]][i,j,2]<-sum(image.raw[[2]][i,j,,2])*(2/steps)
     }
   }
 
@@ -355,7 +371,7 @@ buildqPLM<-function(steps = 6,
   #fill a2: sum of signal*cos(2*a.phi) over (steps/2)
   for (i in 1:length(image.raw[[2]][,1,1,1])){
     for (j in 1:length(image.raw[[2]][1,,1,1])){
-      image.raw[[derIdx]][i,j,3]<-sum(image.raw[[2]][i,j,,3])/(steps/2)
+      image.raw[[derIdx]][i,j,3]<-sum(image.raw[[2]][i,j,,3])*(2/steps)
     }
   }
 
@@ -366,7 +382,7 @@ buildqPLM<-function(steps = 6,
   # create output object array
   qPLM.distilled<-array(data=NA,
                         c(dim(image.raw[[2]])[2],
-                          dim(image.raw[[2]])[1], 3)) # 5 layers for |sin d|, dual phi testing
+                          dim(image.raw[[2]])[1], 3))
 
   print(Sys.time() - placeT)
   placeT<-Sys.time()
@@ -385,7 +401,7 @@ buildqPLM<-function(steps = 6,
   placeT<-Sys.time()
   print("theta")
 
-  # fill theta layer
+  # refill as theta layer
   qPLM.distilled[,,2]<-t(asin
                          (sqrt
                            (asin(t(qPLM.distilled[,,2])) # |sin d|
@@ -393,7 +409,7 @@ buildqPLM<-function(steps = 6,
                              /(2*pi*image.raw[[parIdx[1]]] # thickness
                                *1000
                                *image.raw[[parIdx[3]]]) # birefringence
-                           )))
+                           )))/(pi/2)
 
   print(Sys.time() - placeT)
   placeT<-Sys.time()
@@ -401,24 +417,12 @@ buildqPLM<-function(steps = 6,
 
   for (i in 1:length(qPLM.distilled[1,,1])){
     for (j in 1:length(qPLM.distilled[,1,1])){
-      if (image.raw[[derIdx]][i,j,2] > image.raw[[derIdx]][i,j,3]) {
-        qPLM.distilled[j,i,3]<-(acos
-                                (image.raw[[derIdx]][i,j,2]
-                                  /(sqrt((image.raw[[derIdx]][i,j,2]^2)
-                                         +(image.raw[[derIdx]][i,j,3]^2)))))/pi
-      } else {
-        qPLM.distilled[j,i,3]<-(asin
-                                (-image.raw[[derIdx]][i,j,3]
-                                  /(sqrt((image.raw[[derIdx]][i,j,2]^2)
-                                         +(image.raw[[derIdx]][i,j,3]^2)))))/pi
-      }
-      if (!is.na(qPLM.distilled[j,i,3])){
-        if (qPLM.distilled[j,i,3]<=0){
-          qPLM.distilled[j,i,3]<-1+qPLM.distilled[j,i,3]
-        }
-      }
+      qPLM.distilled[j,i,3]<-(pi/2) + sign(image.raw[[derIdx]][i,j,3]) * 0.5 * acos(-image.raw[[derIdx]][i,j,2]/sqrt(image.raw[[derIdx]][i,j,2]^2+image.raw[[derIdx]][i,j,3]^2))
+      # updated 6/8/18 with criterion from Kaminsky et al 2007 (MilliView description)
     }
   }
+
+  qPLM.distilled[,,3]<-(qPLM.distilled[,,3]/pi)%%1
 
   print(Sys.time() - placeT)
   placeT<-Sys.time()

@@ -26,7 +26,7 @@
 
 qPLMSphereSkinner<-function(pixel.size, theta.max) {
   #require(EBImage)
-  requireNamespace(colorspace)
+  #requireNamespace(colorspace)
   #require(bmp)
 
   colatitude.limit<-as.integer(pixel.size*theta.max/180)

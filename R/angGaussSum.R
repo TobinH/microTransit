@@ -14,7 +14,7 @@
 #'   Default is 95\% CI.
 #'
 #' @param tol Tolerance for convergence of iterative algorithm. Default value is
-#'   the default for the all.equal() function. Increase this value if the
+#'   the default for the \code{all.equal()} function. Increase this value if the
 #'   function returns an identity matrix for the lambda estimate.
 #'
 #' @return A list with four components: \enumerate{ \item $lambda.matrix: a
@@ -53,6 +53,10 @@ angGaussSumm<-function(X, alpha=0.05, tol=sqrt(.Machine$double.eps)){
   convCrit2<- 3 # container for current interations's value of ""
   while (counter < 4 | !isTRUE(all.equal(convCrit1, convCrit2, tolerance = tol))){ # iterative procedure for ML estimate of lambda matrix
     # tolerance can be tweaked for missed convergence in test cases
+    # poorly conditioned matrices cause all sorts of problems... check first
+    if (rcond(lambda) < tol){
+      break
+    }
     convCrit1<-convCrit2
     convCrit2<-0
     sumli<-matrix(data=0, nrow=ncol(X), ncol=(ncol(X)))

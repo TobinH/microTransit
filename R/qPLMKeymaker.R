@@ -19,7 +19,7 @@
 
 qPLMKeymaker<-function(pixel.size) {
   #require(EBImage)
-  requireNamespace(colorspace)
+  #requireNamespace(colorspace)
   #require(bmp)
   test.array<-array(data=NA, c(pixel.size,pixel.size,3))
   test.1<-matrix(0, nrow=length(test.array[,1,1]), ncol=length(test.array[1,,1]))

@@ -22,6 +22,11 @@
 #'
 #' @param qPLM A \code{qPLMarr} or \code{qPLMtab} object.
 #'
+#' @param cortical Set to \code{TRUE} to automatically "unwrap" cortical bone
+#'   cross sections around the centroid (i.e., set a tangential reference frame
+#'   for in-plane orientation; see \code{\link{centroidCorr}}).
+#'   Default is \code{FALSE}.
+#'
 #' @param grainSize Starting subsample dimensions in pixels. \code{qPLM.clust}
 #'   will cluster square blocks of \code{grainSize} x \code{grainSize} pixels
 #'   based on the angular central Gaussian distribution of their orientations.
@@ -62,15 +67,15 @@
 #'   major tissue differences when there are artifacts in the image that drown
 #'   out biologically relevant tissue dissimilarity.
 #'
-#' @param multi Experimental. Estimating the angular central Gaussian
+#' @param multi For troubleshooting. Estimating the angular central Gaussian
 #'   distribution in parallel using \code{foreach} is much faster,
-#'   but sometimes the array binding step using \code{abind} hits a length
-#'   mismatch and fails. Until the source of the error can be pinned down,
-#'   setting \code{multi} to \code{FALSE} reverts to a nested \code{for}
-#'   loop to work around the problem.
+#'   but any errors arising from the internal call to \code{\link{angGaussSumm}}
+#'   (singular matrices, etc.) are masked from the user this way. Setting
+#'   \code{multi} to \code{FALSE} reverts to a nested \code{for}
+#'   loop to highlight errors.
 #'
 #' @return Returns a qPLMclust object, which is a list with four components:
-#'   \enumerate{ \item $qPLMtab: the pixel-by-pixel orientatin data in
+#'   \enumerate{ \item $qPLMtab: the pixel-by-pixel orientation data in
 #'   \code{qPLMtab} format. \item $GaussRaster: a \code{RasterBrick}
 #'   representation of the angular central Gaussian distribution parameters per
 #'   block. \item $groupMatrix: a matrix with rows that represent processed
@@ -198,7 +203,7 @@ qPLMClust<-function(qPLM,
       for(j in 1:angV){
         tempGauss<-0
         if (length(which(xtb[,8]==i&xtb[,9]==j))>=cutoff){
-          tempGauss<-try(ang.Gauss.summ(xtb[which(xtb[,8]==i&xtb[,9]==j), 3:5], tol=1.5e-06))
+          tempGauss<-try(ang.Gauss.summ(xtb[which(xtb[,10]==i&xtb[,11]==j), 3:5], tol=1.5e-06))
           qPLMGauss[i,j,1:3]<-tempGauss$lambda.eigval
           qPLMGauss[i,j,4:6]<-tempGauss$lambda.eigvec[,1]
           qPLMGauss[i,j,7:9]<-tempGauss$lambda.eigvec[,2]
