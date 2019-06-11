@@ -37,6 +37,7 @@ Null; .tiff files saved to working directory.
 
 }
 \seealso{
-Other qPLM Illustration Functions: \code{\link{qPLMKeymaker}},
+Other qPLM Illustration Functions: \code{\link{acgEllipse}},
+  \code{\link{qPLMKeymaker}},
   \code{\link{qPLMSphereSkinner}}
 }

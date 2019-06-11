@@ -22,6 +22,6 @@ combined colatitude (theta) and longitude (phi) "_overview.tif" images.
 not yet.
 }
 \seealso{
-Other qPLM Illustration Functions: \code{\link{qPLMSphereSkinner}},
-  \code{\link{qPLMTiff}}
+Other qPLM Illustration Functions: \code{\link{acgEllipse}},
+  \code{\link{qPLMSphereSkinner}}, \code{\link{qPLMTiff}}
 }

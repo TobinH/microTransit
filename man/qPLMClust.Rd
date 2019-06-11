@@ -10,6 +10,11 @@ qPLMClust(qPLM, cortical = FALSE, grainSize = 20, cutoff = 20,
 \arguments{
 \item{qPLM}{A \code{qPLMarr} or \code{qPLMtab} object.}
 
+\item{cortical}{Set to \code{TRUE} to automatically "unwrap" cortical bone
+cross sections around the centroid (i.e., set a tangential reference frame
+for in-plane orientation; see \code{\link{centroidCorr}}).
+Default is \code{FALSE}.}
+
 \item{grainSize}{Starting subsample dimensions in pixels. \code{qPLM.clust}
 will cluster square blocks of \code{grainSize} x \code{grainSize} pixels
 based on the angular central Gaussian distribution of their orientations.
@@ -59,7 +64,7 @@ loop to work around the problem.}
 }
 \value{
 Returns a qPLMclust object, which is a list with four components:
-  \enumerate{ \item $qPLMtab: the pixel-by-pixel orientatin data in
+  \enumerate{ \item $qPLMtab: the pixel-by-pixel orientation data in
   \code{qPLMtab} format. \item $GaussRaster: a \code{RasterBrick}
   representation of the angular central Gaussian distribution parameters per
   block. \item $groupMatrix: a matrix with rows that represent processed

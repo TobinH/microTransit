@@ -17,7 +17,7 @@ without requiring specific column addresses.}
 Default is 95\% CI.}
 
 \item{tol}{Tolerance for convergence of iterative algorithm. Default value is
-the default for the all.equal() function. Increase this value if the
+the default for the \code{all.equal()} function. Increase this value if the
 function returns an identity matrix for the lambda estimate.}
 }
 \value{

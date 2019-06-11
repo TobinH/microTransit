@@ -30,6 +30,12 @@ specimen face. If the specimen can be assumed to have a constant thickness
 across the field of view, the N value will be used to fill in S, W, & E by
 default.}
 
+\item{south.thickness}{'South' (bottom) edge thickness.}
+
+\item{west.thickness}{'West' (left) edge thickness.}
+
+\item{east.thickness}{'East' (right) edge thickness.}
+
 \item{wavelength}{The center of the illumination wavelength. Default is a
 532nm green filter.}
 
@@ -86,7 +92,8 @@ Native R qPLM analysis from multiple images of a static specimen
 \examples{
 oldwd<-getwd()
 setwd(system.file("extdata", package = "microTransit"))
-testqPLMarr<-buildqPLM(steps = 6, tiffs.glob = "OsteonImg*", mask.glob = "OsteonMask*", north.thickness = 40)
+testqPLMarr<-buildqPLM(steps = 6, tiffs.glob = "OsteonImg*",
+                        mask.glob = "OsteonMask*", north.thickness = 40)
 save(testqPLMarr, "testqPLMarr.R")
 setwd(oldwd)
 qPLMTiff("testqPLM", testqPLMarr)
@@ -97,6 +104,10 @@ qPLMTiff("testqPLM", testqPLMarr)
 Glazer, A.M., Lewis, J.G., and Kaminsky, W., 1996. An automatic
   optical imaging system for birefringent media. \emph{Proc R Soc A
   452(1955)}: 2751 - 2765.
+
+  Kaminsky, W., Gunn, E., Sours, R., and Kahr, B., 2007. Simultaneous
+  false-colour imaging of birefringence, extinction and transmittance
+  at camera speed. \emph{J Microsc 228(2)}: 153 - 164.
 }
 \seealso{
 Other qPLM Input Functions: \code{\link{densBiref}}

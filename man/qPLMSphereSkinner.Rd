@@ -27,6 +27,6 @@ Illustrator).
 not yet.
 }
 \seealso{
-Other qPLM Illustration Functions: \code{\link{qPLMKeymaker}},
-  \code{\link{qPLMTiff}}
+Other qPLM Illustration Functions: \code{\link{acgEllipse}},
+  \code{\link{qPLMKeymaker}}, \code{\link{qPLMTiff}}
 }
