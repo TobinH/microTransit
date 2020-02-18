@@ -233,6 +233,31 @@ buildqPLM<-function(steps = 6,
     for (m in 1:nrow(shiftMatrix)){
       shiftMatrix[m,]<-which(alignmentArray[,,m]==min(alignmentArray[,,m]), arr.ind=TRUE)-(pixelshift+1)
     }
+    
+    sFlag<-pixelshift
+    for (q in 2:dim(image.raw[[1]])[3]){
+      vdiff<-sum(shiftMatrix[1:(q-1),1])
+      udiff<-sum(shiftMatrix[1:(q-1),2])
+      sFlag<-max(c(sFlag, max(c(vdiff, udiff))))
+    }
+    
+    if (sFlag>pixelshift){
+      vshiftstart<-sFlag+1
+      vshiftstop<-(dim(image.raw[[1]])[1]-sFlag)
+      
+      ushiftstart<-sFlag+1
+      ushiftstop<-(dim(image.raw[[1]])[2]-sFlag)
+      
+      image.raw[[2]]<-array(data=NA,
+                            c(dim(image.test)[1]-(2*sFlag),
+                              dim(image.test)[2]-(2*sFlag),
+                              steps,
+                              3))
+      
+      image.raw[[2]][,,1,]<-image.raw[[1]][vshiftstart:vshiftstop,
+                                           ushiftstart:ushiftstop,
+                                           1,]
+    }
 
     for (p in 2:dim(image.raw[[1]])[3]){
       image.raw[[2]][,,p,]<-image.raw[[1]][(vshiftstart+sum(shiftMatrix[1:(p-1),1])):
