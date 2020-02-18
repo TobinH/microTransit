@@ -51,6 +51,6 @@ acgEllipse<-function(angGaussObj){
   rgl::open3d()
   rgl::bg3d("black")
   rgl::axes3d(color = "white")
-  rgl::shade3d(rotate3d(ellip, matrix = posEigenvectors))
+  rgl::shade3d(rgl::rotate3d(ellip, matrix = posEigenvectors))
   rgl::title3d(main = NULL, xlab = "X", ylab = "Y", zlab = "Z", color = "white")
 }
