@@ -5,7 +5,7 @@
 #'   to a tangent from the centroid of the object cross-section. Resulting
 #'   orientations are in a sense 'unwrapping' the cortex around the centroid.
 #'
-#' @details For some questions (e.g., resistance of coritcal bone to torsion),
+#' @details For some questions (e.g., resistance of cortical bone to torsion),
 #'   orientation in plane relative to a centroid is informative. This function
 #'   returns orientation relative to a 'naive' assumption of the structural
 #'   centroid of a cross-section.
