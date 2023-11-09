@@ -392,7 +392,3 @@ qPLMClust<-function(qPLM,
   return(result)
 
 }
-
-
-
-
