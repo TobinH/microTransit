@@ -3,7 +3,14 @@
 #' @description \code{qPLMKeymaker} creates a key image for interpreting
 #' combined colatitude (theta) and longitude (phi) "_overview.tif" images.
 #'
-#' @details not yet.
+#' @details The \code{.tiff} file produced by this function should appear as a
+#'   colorful circle on a black background. Imagine this image as a view of the
+#'   northern hemisphere of a globe, with the prime meridian directed to the right.
+#'   A ray projecting from the center of the globe through the north pole
+#'   (colatitude 0°) would emerge in the center of the circle, and be color-coded
+#'   black. A ray emerging with a colatitude of 45°and a longitude of 45°would
+#'   be color-coded as a half-saturated blue. A ray emerging at the equator with
+#'   a longitude of 135° would be color-coded as a fully saturated green.
 #'
 #' @param pixel.size Dimension in pixels for square output image.
 #'
