@@ -1,7 +1,8 @@
 #' @title Interactive Sub-sampling of qPLM Data by Pixel count
 #'
 #' @description \code{pullqPLMSample} sub-samples a specified number of pixels
-#'   from a \code{qPLMarr} object around an interactively selected point.
+#'   from a \code{qPLMarr} object in a square ROI around an interactively selected
+#'   point.
 #'
 #' @param qPLMarr A \code{qPLMarr} object.
 #'
