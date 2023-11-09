@@ -1,8 +1,7 @@
 #' @title Place qPLMarr Data in Tabular Format
 #'
-#' @description \code{qPLMTabulate} pulls data from the [u,v,3] array format of
+#' @description \code{qPLMTabulate} casts data from the [u,v,3] array format of
 #'   a qPLMarr object into a qPLMtab matrix.
-#'
 #'
 #' @param qPLMarr A qPLMarr object.
 #'
