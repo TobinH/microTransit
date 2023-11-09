@@ -5,7 +5,7 @@
 #'   specified birefringence, orientation, thickness, and wavelength,} at
 #'   specified slow axis orientation.
 #'
-#' @details none yet.
+#' @details The Jones calculus provides a means to represent polarization of light with matrix and vector elements (Fowles 1989).
 #'
 #' @param retardance Shortcut to produce a specified retardance. Default is
 #'   null.
@@ -25,6 +25,8 @@
 #' @param slow.phi.deg In-plane orientation of the slow axis of the material.
 #'
 #' @return A Jones matrix.
+#'
+#' @references Fowles, G. R. (1989). Introduction to modern optics. Courier Corporation.
 #'
 #' @family qPLM Simulation Functions
 #'
