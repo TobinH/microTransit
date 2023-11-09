@@ -1,54 +1,124 @@
-#' @title Single-Pixel Simulation of Rotating Polarizer qPLM
+#' @title Produce Overview TIFFs From qPLM Arrays
 #'
-#' @description \code{Rotosim} uses Jones calculus to simulate the interactions
-#' of a right circular polarizer, a birefringent specimen, and a rotating
-#' analyzer in sequence, modeling the setup of a Glazer et al. (1996) method
-#' qPLM scope.
+#' @description \code{qPLMTiff} creates greyscale .tiff images of out-of-plane
+#'   orientation (theta), in-plane orientation (phi), transmittance (trans), and
+#'   a false-color representation of combined orientation data (overview).
 #'
-#' @param steps Integer; the number of analyzer positions to use. Default is
-#'   six.
+#' @details The false-color image of the "overview" \code{.tiff} uses the
+#'   LUV colorspace to produce a perceptually similar brightness for equal
+#'   levels of theta, and encodes phi with different hues.
 #'
-#' @param sample a Jones matrix representation of a birefringent sample. Can be
-#'   made using \code{jonesRet}.
+#' @param sample.name An identifier for the sample, used as a stem for the
+#'   output file names.
 #'
-#' @return A list containing (1) |sin d|, a measure of retardance (varies with
-#'   out-of-plane angle), (2-3) phi, the in-plane orientation of the specimen
-#'   slow axis, and (4) Io, the transmissivity of the specimen.
+#' @param qPLMarr A qPLMarr object, e.g., output from \code{buildqPLM}.
 #'
-#' @references Glazer, A.M., Lewis, J.G., and Kaminsky, W., 1996. An automatic
-#'   optical imaging system for birefringent media. \emph{Proc R Soc A
-#'   452(1955)}: 2751 - 2765.
+#' @param theta.scale Boolean; if TRUE, automatically scales "_overview.tif"
+#'   image color scale to peak at maximum measured theta value (default is
+#'   FALSE).
 #'
-#' @family qPLM Simulation Functions
+#' @param theta.max Numerical; if theta.scale is FALSE, specifies an upper end
+#'   (degrees) for "_overview.tif" color scale (default is 90 degrees).
+#'
+#' @param invert.theta.scale Boolean; if TRUE, bright colors point toward
+#'   viewer, brightness falls off as orientations go to parallel with the slide.
+#'   Useful for sections with predominantly out-of-plane fibers (default is
+#'   FALSE).
+#'
+#' @return Null; .tiff files saved to working directory.
+#'
+#' @family qPLM Illustration Functions
 #'
 #' @export
 
-# Single-pixel simulation of rotating polarizer qPLM methods
-# Tobin Hieronymus 6-Oct-2014
-
-Rotosim<-function(steps=6,sample){
-  views<-matrix(data=NA, nrow=steps, ncol=4)
-  RCP.light<-matrix(data=c(1/sqrt(2),(1/sqrt(2))*-1i), nrow=2, ncol=1)
-  for (p in 1:steps){
-    a.phi<-(p)*(pi/steps)
-    analyzer<-matrix(data=c(cos(a.phi)^2,
-                            sin(a.phi)*cos(a.phi),
-                            cos(a.phi)*sin(a.phi),
-                            sin(a.phi)^2), nrow=2, ncol=2)
-    signal<-analyzer%*%sample%*%RCP.light
-    views[p,1]<-Mod(signal[1,])^2+Mod(signal[2,])^2
-    views[p,2]<-views[p,1]*sin(2*a.phi)
-    views[p,3]<-views[p,1]*cos(2*a.phi)
-    views[p,4]<-(a.phi/(2*pi))*360
+qPLMTiff<-function(sample.name,
+                   qPLMarr,
+                   theta.scale=FALSE,
+                   theta.max=90,
+                   invert.theta.scale=FALSE){
+  mashButton<-"y"
+  if (attr(qPLMarr, "class") != "qPLMarr"){
+    mashButton<-readline(prompt = "This doesn't look like a qPLMarr object. Continue anyway (y/n)? > ")
+    if (mashButton != "y"){
+      break
+    }
   }
-  a0<-sum(views[,1])/steps
-  a1<-sum(views[,2])/(steps/2)
-  a2<-sum(views[,3])/(steps/2)
-  abs.sin.d<-(sqrt((a1^2)+(a2^2)))/a0
-  phi1<-asin(a2/(sqrt(a1^2+a2^2)))/2
-  phi1<-(phi1/(2*pi))*360
-  phi2<-acos(-a1/(sqrt((a1^2)+(a2^2))))/2
-  phi2<-(phi2/(2*pi))*360
-  Io<-2*a0
-  out<-list(abs.sin.d, phi1, phi2, Io)
+  if(theta.scale){
+    theta.max<-ceiling(max(qPLMarr[,,2]*90))
+  }
+  theta.max<-ceiling(theta.max)
+  if (invert.theta.scale) {
+    thetaseq<-seq(from=90, to=90-theta.max)
+  }
+  else{
+    thetaseq<-seq(from=0, to=theta.max)
+  }
+  phiseq<-seq(from=0, to=180)
+  pixLUT<-expand.grid(thetaseq, phiseq)
+  rm(thetaseq, phiseq)
+  # integer combinations of theta and phi for the look-up table
+
+  print("Building colorspace: LUV encoding")
+  PLUV.LUT<-colorspace::polarLUV((pixLUT[,1]*0.75+22.5)*90/theta.max,
+                                 pixLUT[,1]*57.65/theta.max,
+                                 pixLUT[,2]*360/180)
+  # polar LUV colorspace encoding of each integer combination
+
+  print("Building colorspace: RGB translation")
+  RGB.LUT<-as(PLUV.LUT,"RGB")
+  rm(PLUV.LUT)
+  # RGB value conversion of polar LUV look-up table
+
+  pixmat<-as.matrix(pixLUT)
+  rm(pixLUT)
+  # n by 2 integer combination table
+
+  RGBmat<-RGB.LUT@coords
+  rm(RGB.LUT)
+  gc()
+  # n by 3 RGB look-up table
+
+  print("Color mapping")
+  if (invert.theta.scale){
+    theta.values<-as.vector(as.integer((1-qPLMarr[,,2])*90))
+  }
+  else{
+    theta.values<-as.vector(as.integer(qPLMarr[,,2]*90))
+  }
+
+  immat<-cbind(theta.values, as.vector((as.integer(qPLMarr[,,3]*180))))
+  # image pixel values m by 2 table
+
+  LUindex<-match(data.frame(t(immat)), data.frame(t(pixmat)))
+  rm(immat, pixmat)
+  # look-up indices for image pixels
+
+  coded<-array(data=RGBmat[LUindex,], dim=dim(qPLMarr))
+  rm(RGBmat)
+  rm(LUindex)
+  gc()
+  # cast looked-up RGB values into RGB image array
+
+  print("Writing image: _trans")
+  trans<-EBImage::Image(qPLMarr[,,1], colormode="Grayscale")
+  EBImage::writeImage(trans, file=paste(sample.name,"_trans.tif", sep=""), bits.per.sample=8L, type="tiff")
+  # Transmission (I) grayscale image out
+
+  print("Writing image: _theta")
+  theta<-Image(qPLMarr[,,2], colormode="Grayscale")
+  writeImage(theta, file=paste(sample.name, "_theta.tif", sep=""), bits.per.sample=8L, type="tiff")
+  # colatitude (theta) grayscale image out
+
+  print("Writing image: _phi")
+  phi<-Image(qPLMarr[,,3], colormode="Grayscale")
+  EBImage::writeImage(phi, file=paste(sample.name, "_phi.tif",sep=""), bits.per.sample=8L, type="tiff")
+  rm(trans, theta, phi)
+  gc()
+  # azimuth (phi) grayscale image out
+
+  print("Writing image: _overview")
+  output<-EBImage::Image(coded,colormode="Color")
+  EBImage::writeImage(output,file=paste(sample.name,"_overview.tif", sep=""), bits.per.sample=8L, type="tiff")
+  # combined colatitude and azimuth color image out
+
 }
