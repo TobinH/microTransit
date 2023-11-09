@@ -3,8 +3,6 @@
 #' @description \code{pullROI} sub-samples a \code{qPLMarr} object with an
 #'   interactively selected rectangular ROI.
 #'
-#' @details no.
-#'
 #' @param qPLMarr A \code{qPLMarr} object.
 #'
 #' @param layer Value from 1-3; this layer will be displayed on-screen for
