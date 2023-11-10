@@ -24,9 +24,13 @@ colatitude (theta) and longitude (phi) on a sphere (e.g., in Adobe
 Illustrator).
 }
 \details{
-not yet.
+the \code{.tiff} image produced by this function can be used to skin
+  a hemispherical object for inclusion in 3D-modeled figures.
 }
 \seealso{
-Other qPLM Illustration Functions: \code{\link{acgEllipse}},
-  \code{\link{qPLMKeymaker}}, \code{\link{qPLMTiff}}
+Other qPLM Illustration Functions: 
+\code{\link{acgEllipse}()},
+\code{\link{qPLMKeymaker}()},
+\code{\link{qPLMTiff}()}
 }
+\concept{qPLM Illustration Functions}

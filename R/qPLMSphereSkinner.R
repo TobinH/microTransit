@@ -4,7 +4,8 @@
 #' colatitude (theta) and longitude (phi) on a sphere (e.g., in Adobe
 #' Illustrator).
 #'
-#' @details not yet.
+#' @details the \code{.tiff} image produced by this function can be used to skin
+#'   a hemispherical object for inclusion in 3D-modeled figures.
 #'
 #' @param pixel.size Dimension in pixels for square output image.
 #'

@@ -17,9 +17,15 @@ A Jones matrix.
 at specified orientation phi.
 }
 \details{
-none yet.
+The Jones calculus provides a means to represent polarization of light
+  with matrix and vector elements (Fowles 1989).
+}
+\references{
+Fowles, G. R. (1989). Introduction to modern optics. Courier Corporation.
 }
 \seealso{
-Other qPLM Simulation Functions: \code{\link{Rotosim}},
-  \code{\link{jonesRet}}
+Other qPLM Simulation Functions: 
+\code{\link{Rotosim}()},
+\code{\link{jonesRet}()}
 }
+\concept{qPLM Simulation Functions}

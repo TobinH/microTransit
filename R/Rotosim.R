@@ -9,7 +9,7 @@
 #'   six.
 #'
 #' @param sample a Jones matrix representation of a birefringent sample. Can be
-#'   made using \code{jones.ret}.
+#'   made using \code{jonesRet}.
 #'
 #' @return A list containing (1) |sin d|, a measure of retardance (varies with
 #'   out-of-plane angle), (2-3) phi, the in-plane orientation of the specimen

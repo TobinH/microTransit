@@ -1,11 +1,15 @@
 #' @title Model an Embedded Tissue Block With Registration Marks
 #'
 #' @description \code{makeBlock} creates a "histoBlock" object to register a
-#' physical cross-section (typically a histology slide) within a MicroCT volume.
+#'   physical cross-section (typically a histology slide) within a MicroCT volume.
 #'
-#' @param B Block width on face plane (micrometers?).
+#' @details This function works together with \code{registerSlide} to provide
+#'   the information necessary to position a section back within the volume of its
+#'   parent block, e.g. for importing histological images into a microCT volume.
 #'
-#' @param H Block height on face plane (micrometers?).
+#' @param B Block width on face plane (match to voxel units, usually millimeters).
+#'
+#' @param H Block height on face plane (match to voxel units, usually millimeters).
 #'
 #' @param L1,L2 Upper and lower longitudinal notch offsets. For each, this is
 #'   the distance from the nearest lateral face to the far side of the

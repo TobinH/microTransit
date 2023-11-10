@@ -22,7 +22,7 @@ A \code{qPLMtab} object; a matrix with columns \enumerate{ \item (1)
   orientations are in a sense 'unwrapping' the cortex around the centroid.
 }
 \details{
-For some questions (e.g., resistance of coritcal bone to torsion),
+For some questions (e.g., resistance of cortical bone to torsion),
   orientation in plane relative to a centroid is informative. This function
   returns orientation relative to a 'naive' assumption of the structural
   centroid of a cross-section.
@@ -37,8 +37,12 @@ testCorrtab<-centroidCorr(testqPLMtab)
 
 }
 \seealso{
-Other qPLM Analysis Functions: \code{\link{angGaussSumm}},
-  \code{\link{pullCluster}}, \code{\link{pullROI}},
-  \code{\link{pullqPLMSample}}, \code{\link{qPLMClust}},
-  \code{\link{qPLMTabulate}}
+Other qPLM Analysis Functions: 
+\code{\link{angGaussSumm}()},
+\code{\link{pullCluster}()},
+\code{\link{pullROI}()},
+\code{\link{pullqPLMSample}()},
+\code{\link{qPLMClust}()},
+\code{\link{qPLMTabulate}()}
 }
+\concept{qPLM Analysis Functions}

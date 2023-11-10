@@ -19,7 +19,7 @@ A [u*v,9] qPLMtab matrix, with columns (1) theta, (2) phi, (3-5) the
   as an integer, and (8-9) the [u,v] position of the pixel in millimeters.
 }
 \description{
-\code{qPLMTabulate} pulls data from the [u,v,3] array format of
+\code{qPLMTabulate} casts data from the [u,v,3] array format of
   a qPLMarr object into a qPLMtab matrix.
 }
 \examples{
@@ -33,8 +33,12 @@ save(testqPLMtab, file = "testqPLMtab.R")
 
 }
 \seealso{
-Other qPLM Analysis Functions: \code{\link{angGaussSumm}},
-  \code{\link{centroidCorr}}, \code{\link{pullCluster}},
-  \code{\link{pullROI}}, \code{\link{pullqPLMSample}},
-  \code{\link{qPLMClust}}
+Other qPLM Analysis Functions: 
+\code{\link{angGaussSumm}()},
+\code{\link{centroidCorr}()},
+\code{\link{pullCluster}()},
+\code{\link{pullROI}()},
+\code{\link{pullqPLMSample}()},
+\code{\link{qPLMClust}()}
 }
+\concept{qPLM Analysis Functions}

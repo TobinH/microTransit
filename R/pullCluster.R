@@ -2,9 +2,15 @@
 #'
 #' @description \code{pullCluster} sub-samples a spatially clustered qPLM
 #'   dataset (a \code{qPLMclust} object) and returns a \code{qPLMtab} object
-#'   with all the pixels in the selected cluster.
+#'   with all the pixels in the selected cluster node.
 #'
-#' @details no.
+#' @details This function allows the user to sample an existing spatial clustering
+#'   scheme generated using \code{qPLMClust}. The display starts at the deepest split
+#'   in the cluster analysis, showing the two most dissimilar patches of pixels by
+#'   whichever criteria were chosen for \code{qPLMClust}. Advancing through the nodes by
+#'   entering \code{f} at the prompt shows additional splits in order of increasing
+#'   similarity. Once the desired set of splits is displayed, The user can then enter
+#'   \code{s} at the prompt to select one or more groups of pixels.
 #'
 #' @param qPLMclust A \code{qPLMclust} object, returned from \code{qPLMClust}.
 #'
@@ -31,7 +37,7 @@ pullCluster<-function(qPLMclust){
   rl<-" "
   while(rl!="s"){
     raster::plot(qPLMclust$groupRaster, i)
-    rl<-readline(prompt = "Select a cluster layer: (f)orward, (b)ack, (s)elect > ")
+    rl<-readline(prompt = "Select a cluster level: (f)orward, (b)ack, (s)elect > ")
     if(substr(rl, 1, 1)=="f"){
       i<-i+1
     }
@@ -40,7 +46,7 @@ pullCluster<-function(qPLMclust){
     }
     if(i<1){
       i<-1
-      print("Can't go back! already at most inclusive clusters.")
+      print("Can't go back! already at most inclusive node.")
     }
   }
 

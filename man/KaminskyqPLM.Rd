@@ -5,10 +5,19 @@
 \title{Interactively Build qPLMarr Object From Werner Kaminsky's Rotopol(tm)
   Format Images}
 \usage{
-KaminskyqPLM(sample.name, north.thickness, south.thickness = NULL,
-  west.thickness = NULL, east.thickness = NULL, wavelength = 532,
-  birefringence = 0.005, pixel = 7.5832259, up = 0, mask = TRUE,
-  data.type = "generic")
+KaminskyqPLM(
+  sample.name,
+  north.thickness,
+  south.thickness = NULL,
+  west.thickness = NULL,
+  east.thickness = NULL,
+  wavelength = 532,
+  birefringence = 0.005,
+  pixel = 7.5832259,
+  up = 0,
+  mask = TRUE,
+  data.type = "generic"
+)
 }
 \arguments{
 \item{sample.name}{A name that will be used as a stem to label output files

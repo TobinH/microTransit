@@ -3,11 +3,11 @@
 #' @description \code{registerSlide} uses notch measurements on a slide,
 #'   together with the notch information from a block object (see
 #'   \code{make.block}) to position an arbitrarily cut section within the
-#'   reference frame of a machined embedded block. This allows precision
-#'   registration of plastic-embedded ground sections to a volume representation
-#'   of the block, e.g. a MicroCT data set.
+#'   reference frame of a machined embedded block.
 #'
-#' @details forthcoming.
+#' @details This function works together with \code{makeBlock} to provide
+#'   the information necessary to position a section back within the volume of
+#'   its parent block, e.g. for importing histological images into a microCT volume.
 #'
 #' @param block A histoBlock object created by \code{make.block}.
 #'

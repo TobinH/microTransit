@@ -1,7 +1,7 @@
 Package: microTransit
 Type: Package
 Title: Quantitative Polarized Light Imaging and Analysis Tools
-Version: 0.3.6
+Version: 1.0.0
 Author: Tobin L. Hieronymus
 Maintainer: Tobin Hieronymus <thieronymus@neomed.edu>
 Imports: EBImage, abind, bmp, colorspace, parallel, doParallel, foreach, raster, spdep, tiff

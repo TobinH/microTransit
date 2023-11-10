@@ -4,10 +4,21 @@
 \alias{KaminskyqPLMScript}
 \title{Build qPLM Array Object From Specified Rotopol(tm) Format Images}
 \usage{
-KaminskyqPLMScript(sample.name, bitmap.glob, mask.glob = NULL,
-  north.thickness, south.thickness, west.thickness, east.thickness,
-  wavelength = 532, birefringence = 0.005, pixel = 7.5832259, up = 0,
-  mask = TRUE, data.type = "generic")
+KaminskyqPLMScript(
+  sample.name,
+  bitmap.glob,
+  mask.glob = NULL,
+  north.thickness,
+  south.thickness,
+  west.thickness,
+  east.thickness,
+  wavelength = 532,
+  birefringence = 0.005,
+  pixel = 7.5832259,
+  up = 0,
+  mask = TRUE,
+  data.type = "generic"
+)
 }
 \arguments{
 \item{sample.name}{A name that will be used as a stem to label output

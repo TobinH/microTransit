@@ -4,10 +4,22 @@
 \alias{buildqPLM}
 \title{Build qPLMarr Object From Rotating Analyzer Images.}
 \usage{
-buildqPLM(steps = 6, tiffs.glob, pixelshift = 10, mask.glob = NULL,
-  north.thickness, south.thickness = NULL, west.thickness = NULL,
-  east.thickness = NULL, wavelength = 532, birefringence = 0.005,
-  pixel = 7.5832259, up = 0, mask = TRUE, data.type = "generic")
+buildqPLM(
+  steps = 6,
+  tiffs.glob,
+  pixelshift = 10,
+  mask.glob = NULL,
+  north.thickness,
+  south.thickness = NULL,
+  west.thickness = NULL,
+  east.thickness = NULL,
+  wavelength = 532,
+  birefringence = 0.005,
+  pixel = 7.5832259,
+  up = 0,
+  mask = TRUE,
+  data.type = "generic"
+)
 }
 \arguments{
 \item{steps}{The number of analyzer positions used. Default is six (six
@@ -110,5 +122,7 @@ Glazer, A.M., Lewis, J.G., and Kaminsky, W., 1996. An automatic
   at camera speed. \emph{J Microsc 228(2)}: 153 - 164.
 }
 \seealso{
-Other qPLM Input Functions: \code{\link{densBiref}}
+Other qPLM Input Functions: 
+\code{\link{densBiref}()}
 }
+\concept{qPLM Input Functions}
