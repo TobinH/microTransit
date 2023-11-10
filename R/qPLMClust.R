@@ -203,7 +203,7 @@ qPLMClust<-function(qPLM,
       for(j in 1:angV){
         tempGauss<-0
         if (length(which(xtb[,8]==i&xtb[,9]==j))>=cutoff){
-          tempGauss<-try(ang.Gauss.summ(xtb[which(xtb[,10]==i&xtb[,11]==j), 3:5], tol=1.5e-06))
+          tempGauss<-try(angGaussSumm(xtb[which(xtb[,10]==i&xtb[,11]==j), 3:5], tol=1.5e-06))
           qPLMGauss[i,j,1:3]<-tempGauss$lambda.eigval
           qPLMGauss[i,j,4:6]<-tempGauss$lambda.eigvec[,1]
           qPLMGauss[i,j,7:9]<-tempGauss$lambda.eigvec[,2]
@@ -392,3 +392,7 @@ qPLMClust<-function(qPLM,
   return(result)
 
 }
+
+
+
+

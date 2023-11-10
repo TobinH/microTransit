@@ -1,3 +1,5 @@
+# Hieronymus Lab 6/11/18
+
 #' @title Build qPLMarr Object From Rotating Analyzer Images.
 #'
 #' @description \code{buildqPLM} creates an array-format qPLMarr object by
