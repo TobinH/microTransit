@@ -23,7 +23,8 @@ A \code{qPLMarr} object with the subsampled pixels. This object will
 }
 \description{
 \code{pullqPLMSample} sub-samples a specified number of pixels
-  from a \code{qPLMarr} object around an interactively selected point.
+  from a \code{qPLMarr} object in a square ROI around an interactively selected
+  point.
 }
 \examples{
 #oldwd<-getwd()
@@ -35,8 +36,12 @@ testSample<-pullqPLMSample(testqPLMarr)
 
 }
 \seealso{
-Other qPLM Analysis Functions: \code{\link{angGaussSumm}},
-  \code{\link{centroidCorr}}, \code{\link{pullCluster}},
-  \code{\link{pullROI}}, \code{\link{qPLMClust}},
-  \code{\link{qPLMTabulate}}
+Other qPLM Analysis Functions: 
+\code{\link{angGaussSumm}()},
+\code{\link{centroidCorr}()},
+\code{\link{pullCluster}()},
+\code{\link{pullROI}()},
+\code{\link{qPLMClust}()},
+\code{\link{qPLMTabulate}()}
 }
+\concept{qPLM Analysis Functions}

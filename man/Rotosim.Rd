@@ -11,7 +11,7 @@ Rotosim(steps = 6, sample)
 six.}
 
 \item{sample}{a Jones matrix representation of a birefringent sample. Can be
-made using \code{jones.ret}.}
+made using \code{jonesRet}.}
 }
 \value{
 A list containing (1) |sin d|, a measure of retardance (varies with
@@ -30,6 +30,8 @@ Glazer, A.M., Lewis, J.G., and Kaminsky, W., 1996. An automatic
   452(1955)}: 2751 - 2765.
 }
 \seealso{
-Other qPLM Simulation Functions: \code{\link{jonesPol}},
-  \code{\link{jonesRet}}
+Other qPLM Simulation Functions: 
+\code{\link{jonesPol}()},
+\code{\link{jonesRet}()}
 }
+\concept{qPLM Simulation Functions}

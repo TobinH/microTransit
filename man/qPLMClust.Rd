@@ -4,8 +4,15 @@
 \alias{qPLMClust}
 \title{Spatial Clustering of Axial Orientation Data from qPLM}
 \usage{
-qPLMClust(qPLM, cortical = FALSE, grainSize = 20, cutoff = 20,
-  criterion = "theta", thresHold = 0.8, multi = TRUE)
+qPLMClust(
+  qPLM,
+  cortical = FALSE,
+  grainSize = 20,
+  cutoff = 20,
+  criterion = "theta",
+  thresHold = 0.8,
+  multi = TRUE
+)
 }
 \arguments{
 \item{qPLM}{A \code{qPLMarr} or \code{qPLMtab} object.}
@@ -55,12 +62,12 @@ similarity score of less  than this variable. Useful for getting back to
 major tissue differences when there are artifacts in the image that drown
 out biologically relevant tissue dissimilarity.}
 
-\item{multi}{Experimental. Estimating the angular central Gaussian
+\item{multi}{For troubleshooting. Estimating the angular central Gaussian
 distribution in parallel using \code{foreach} is much faster,
-but sometimes the array binding step using \code{abind} hits a length
-mismatch and fails. Until the source of the error can be pinned down,
-setting \code{multi} to \code{FALSE} reverts to a nested \code{for}
-loop to work around the problem.}
+but any errors arising from the internal call to \code{\link{angGaussSumm}}
+(singular matrices, etc.) are masked from the user this way. Setting
+\code{multi} to \code{FALSE} reverts to a nested \code{for}
+loop to highlight errors.}
 }
 \value{
 Returns a qPLMclust object, which is a list with four components:
@@ -126,8 +133,12 @@ Lance, G.N., and Williams, W.T., 1966. A generalized sorting
   distribution on the sphere. \emph{Biometrika, 74(3)}: 579 - 589.
 }
 \seealso{
-Other qPLM Analysis Functions: \code{\link{angGaussSumm}},
-  \code{\link{centroidCorr}}, \code{\link{pullCluster}},
-  \code{\link{pullROI}}, \code{\link{pullqPLMSample}},
-  \code{\link{qPLMTabulate}}
+Other qPLM Analysis Functions: 
+\code{\link{angGaussSumm}()},
+\code{\link{centroidCorr}()},
+\code{\link{pullCluster}()},
+\code{\link{pullROI}()},
+\code{\link{pullqPLMSample}()},
+\code{\link{qPLMTabulate}()}
 }
+\concept{qPLM Analysis Functions}

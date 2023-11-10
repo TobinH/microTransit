@@ -19,9 +19,19 @@ Silent return in R. Saves an image with the name "x_pixel_key.tif"
 combined colatitude (theta) and longitude (phi) "_overview.tif" images.
 }
 \details{
-not yet.
+The \code{.tiff} file produced by this function should appear as a
+  colorful circle on a black background. Imagine this image as a view of the
+  northern hemisphere of a globe, with the prime meridian directed to the right.
+  A ray projecting from the center of the globe through the north pole
+  (colatitude 0°) would emerge in the center of the circle, and be color-coded
+  black. A ray emerging with a colatitude of 45°and a longitude of 45°would
+  be color-coded as a half-saturated blue. A ray emerging at the equator with
+  a longitude of 135° would be color-coded as a fully saturated green.
 }
 \seealso{
-Other qPLM Illustration Functions: \code{\link{acgEllipse}},
-  \code{\link{qPLMSphereSkinner}}, \code{\link{qPLMTiff}}
+Other qPLM Illustration Functions: 
+\code{\link{acgEllipse}()},
+\code{\link{qPLMSphereSkinner}()},
+\code{\link{qPLMTiff}()}
 }
+\concept{qPLM Illustration Functions}

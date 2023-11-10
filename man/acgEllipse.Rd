@@ -27,6 +27,9 @@ Tyler, D.E., 1987. Statistical analysis for the angular central
   Gaussian distribution on the sphere. \emph{Biometrika, 74(3)}: 579 - 589.
 }
 \seealso{
-Other qPLM Illustration Functions: \code{\link{qPLMKeymaker}},
-  \code{\link{qPLMSphereSkinner}}, \code{\link{qPLMTiff}}
+Other qPLM Illustration Functions: 
+\code{\link{qPLMKeymaker}()},
+\code{\link{qPLMSphereSkinner}()},
+\code{\link{qPLMTiff}()}
 }
+\concept{qPLM Illustration Functions}

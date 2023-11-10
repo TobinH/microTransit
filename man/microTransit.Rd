@@ -3,7 +3,6 @@
 \docType{package}
 \name{microTransit}
 \alias{microTransit}
-\alias{microTransit-package}
 \title{microTransit: R tools for Quantitative Polarized Light Microscopy (qPLM).}
 \description{
 \pkg{microTransit} provides tools for measuring, analyzing, and illustrating

@@ -4,13 +4,25 @@
 \alias{makeBlock}
 \title{Model an Embedded Tissue Block With Registration Marks}
 \usage{
-makeBlock(B, H, L1, S1, W1, Theta1 = 45, point1 = TRUE, L2, S2, W2,
-  Theta2 = -45, point2 = TRUE)
+makeBlock(
+  B,
+  H,
+  L1,
+  S1,
+  W1,
+  Theta1 = 45,
+  point1 = TRUE,
+  L2,
+  S2,
+  W2,
+  Theta2 = -45,
+  point2 = TRUE
+)
 }
 \arguments{
-\item{B}{Block width on face plane (micrometers?).}
+\item{B}{Block width on face plane (match to voxel units, usually millimeters).}
 
-\item{H}{Block height on face plane (micrometers?).}
+\item{H}{Block height on face plane (match to voxel units, usually millimeters).}
 
 \item{L1, L2}{Upper and lower longitudinal notch offsets. For each, this is
 the distance from the nearest lateral face to the far side of the
@@ -35,8 +47,15 @@ A object of type "histoBlock."
 }
 \description{
 \code{makeBlock} creates a "histoBlock" object to register a
-physical cross-section (typically a histology slide) within a MicroCT volume.
+  physical cross-section (typically a histology slide) within a MicroCT volume.
+}
+\details{
+This function works together with \code{registerSlide} to provide
+  the information necessary to position a section back within the volume of its
+  parent block, e.g. for importing histological images into a microCT volume.
 }
 \seealso{
-Other Section Registration Functions: \code{\link{registerSlide}}
+Other Section Registration Functions: 
+\code{\link{registerSlide}()}
 }
+\concept{Section Registration Functions}

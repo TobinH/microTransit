@@ -48,8 +48,12 @@ Tyler, D.E., 1987. Statistical analysis for the angular central
   Gaussian distribution on the sphere. \emph{Biometrika, 74(3)}: 579 - 589.
 }
 \seealso{
-Other qPLM Analysis Functions: \code{\link{centroidCorr}},
-  \code{\link{pullCluster}}, \code{\link{pullROI}},
-  \code{\link{pullqPLMSample}}, \code{\link{qPLMClust}},
-  \code{\link{qPLMTabulate}}
+Other qPLM Analysis Functions: 
+\code{\link{centroidCorr}()},
+\code{\link{pullCluster}()},
+\code{\link{pullROI}()},
+\code{\link{pullqPLMSample}()},
+\code{\link{qPLMClust}()},
+\code{\link{qPLMTabulate}()}
 }
+\concept{qPLM Analysis Functions}

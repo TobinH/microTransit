@@ -12,10 +12,16 @@ pullCluster(qPLMclust)
 \description{
 \code{pullCluster} sub-samples a spatially clustered qPLM
   dataset (a \code{qPLMclust} object) and returns a \code{qPLMtab} object
-  with all the pixels in the selected cluster.
+  with all the pixels in the selected cluster node.
 }
 \details{
-no.
+This function allows the user to sample an existing spatial clustering
+  scheme generated using \code{qPLMClust}. The display starts at the deepest split
+  in the cluster analysis, showing the two most dissimilar patches of pixels by
+  whichever criteria were chosen for \code{qPLMClust}. Advancing through the nodes by
+  entering \code{f} at the prompt shows additional splits in order of increasing
+  similarity. Once the desired set of splits is displayed, The user can then enter
+  \code{s} at the prompt to select one or more groups of pixels.
 }
 \examples{
 #oldwd<-getwd()
@@ -27,8 +33,12 @@ testCluster<-pullCluster(testqPLMclust_arr)
 
 }
 \seealso{
-Other qPLM Analysis Functions: \code{\link{angGaussSumm}},
-  \code{\link{centroidCorr}}, \code{\link{pullROI}},
-  \code{\link{pullqPLMSample}}, \code{\link{qPLMClust}},
-  \code{\link{qPLMTabulate}}
+Other qPLM Analysis Functions: 
+\code{\link{angGaussSumm}()},
+\code{\link{centroidCorr}()},
+\code{\link{pullROI}()},
+\code{\link{pullqPLMSample}()},
+\code{\link{qPLMClust}()},
+\code{\link{qPLMTabulate}()}
 }
+\concept{qPLM Analysis Functions}

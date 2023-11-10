@@ -22,9 +22,6 @@ A \code{qPLMarr} object with the subsampled pixels. This object will
 \code{pullROI} sub-samples a \code{qPLMarr} object with an
   interactively selected rectangular ROI.
 }
-\details{
-no.
-}
 \examples{
 #oldwd<-getwd()
 #setwd(system.file("extdata", package = "microTransit"))
@@ -35,8 +32,12 @@ testROI<-pullROI(testqPLMarr, 2)
 
 }
 \seealso{
-Other qPLM Analysis Functions: \code{\link{angGaussSumm}},
-  \code{\link{centroidCorr}}, \code{\link{pullCluster}},
-  \code{\link{pullqPLMSample}}, \code{\link{qPLMClust}},
-  \code{\link{qPLMTabulate}}
+Other qPLM Analysis Functions: 
+\code{\link{angGaussSumm}()},
+\code{\link{centroidCorr}()},
+\code{\link{pullCluster}()},
+\code{\link{pullqPLMSample}()},
+\code{\link{qPLMClust}()},
+\code{\link{qPLMTabulate}()}
 }
+\concept{qPLM Analysis Functions}

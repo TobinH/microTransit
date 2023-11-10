@@ -34,9 +34,14 @@ A Jones matrix.
   specified slow axis orientation.
 }
 \details{
-none yet.
+The Jones calculus provides a means to represent polarization of light with matrix and vector elements (Fowles 1989).
+}
+\references{
+Fowles, G. R. (1989). Introduction to modern optics. Courier Corporation.
 }
 \seealso{
-Other qPLM Simulation Functions: \code{\link{Rotosim}},
-  \code{\link{jonesPol}}
+Other qPLM Simulation Functions: 
+\code{\link{Rotosim}()},
+\code{\link{jonesPol}()}
 }
+\concept{qPLM Simulation Functions}

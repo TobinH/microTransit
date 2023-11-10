@@ -4,8 +4,13 @@
 \alias{qPLMTiff}
 \title{Produce Overview TIFFs From qPLM Arrays}
 \usage{
-qPLMTiff(sample.name, qPLMarr, theta.scale = FALSE, theta.max = 90,
-  invert.theta.scale = FALSE)
+qPLMTiff(
+  sample.name,
+  qPLMarr,
+  theta.scale = FALSE,
+  theta.max = 90,
+  invert.theta.scale = FALSE
+)
 }
 \arguments{
 \item{sample.name}{An identifier for the sample, used as a stem for the
@@ -34,10 +39,14 @@ Null; .tiff files saved to working directory.
   a false-color representation of combined orientation data (overview).
 }
 \details{
-
+The false-color image of the "overview" \code{.tiff} uses the
+  LUV colorspace to produce a perceptually similar brightness for equal
+  levels of theta, and encodes phi with different hues.
 }
 \seealso{
-Other qPLM Illustration Functions: \code{\link{acgEllipse}},
-  \code{\link{qPLMKeymaker}},
-  \code{\link{qPLMSphereSkinner}}
+Other qPLM Illustration Functions: 
+\code{\link{acgEllipse}()},
+\code{\link{qPLMKeymaker}()},
+\code{\link{qPLMSphereSkinner}()}
 }
+\concept{qPLM Illustration Functions}
